@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  # FastAPI Application
+  fastapi_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: swi-fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: ./backend/src
+        target: /backend/src
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db-application
+
+  # PostgreSQL Database
+  postgres_db-application:
+    container_name: swi-postgres_db-application
+    image: postgres:16.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - type: volume
+        source: postgres_db-application-data_volume
+        target: /var/lib/postgresql/data
+
+  # pgAdmin Web Interface
+  pgadmin_web:
+    container_name: swi-pgadmin_web
+    image: dpage/pgadmin4:8.2
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    volumes:
+      - type: volume
+        source: pgadmin_web-data_volume
+        target: /var/lib/pgadmin
+    depends_on:
+      - postgres_db-application
+
+  # React Frontend Application
+  react_app:
+    build: ./frontend
+    container_name: swi-react_app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - fastapi_app
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /frontend
+      - type: volume
+        source: react_app-node_modules-data_volume
+        target: /frontend/node_modules
+
+volumes:
+  postgres_db-application-data_volume:
+  pgadmin_web-data_volume:
+  react_app-node_modules-data_volume:
