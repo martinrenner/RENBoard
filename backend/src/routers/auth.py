@@ -21,11 +21,33 @@ auth_service = AuthService()
 
 @auth_router.post("/token", response_model=TokenRead)
 def token_user(user_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: db_dependency):
+    """
+    Generate a token for the authenticated user.
+
+    - **user_data (OAuth2PasswordRequestForm)**: The user's authentication data.
+
+    Returns:
+    - `TokenRead`: The generated token.
+
+    Raises:
+    - `HTTPException`: If the user is not authenticated.
+    """
     user = auth_service.verify_user_and_password(user_data, session)
     return TokenRead.from_auth(AccessToken.create_token(user), RefreshToken.create_token(user))
 
 
 @auth_router.post("/refresh", response_model=TokenRead)
 def refresh_token_user(token: str, session: db_dependency):
+    """
+    Refreshes the access token for a user.
+
+    - **token (str)**: The refresh token provided by the user.
+
+    Returns:
+    - `TokenRead`: The new access and refresh tokens.
+
+    Raises:
+    - `HTTPException`: If the token is invalid or expired.
+    """
     user = auth_service.verify_token_and_user(token, session)
     return TokenRead.from_auth(AccessToken.create_token(user), RefreshToken.create_token(user))

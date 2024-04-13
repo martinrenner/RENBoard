@@ -38,9 +38,9 @@ class Member(SQLModel, table=True):
     __tablename__ = "member"
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
-    date_started: datetime
+    date_started: Optional[datetime] = None
     date_finished: Optional[datetime] = None
-    status: int = 0                                                                     #representing status: -1: declined/deleted, 0: pending, 1: active
+    accepted: bool = False                                                                     #representing status: 0: pending, 1: active
 
     user_id: int = Field(foreign_key="user.id")
     project_id: int = Field(foreign_key="project.id")

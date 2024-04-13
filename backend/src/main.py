@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers.project import project_router
 from routers.auth import auth_router
 from routers.user import user_router
+from routers.project_management import project_management_router
 from database_init import initialize_database
 import os
 
@@ -27,16 +28,20 @@ description = """
 
 tags_metadata = [
     {
-        "name": "Project",
-        "description": "Operations with projects. Basic CRUD operations. **Authorization required.**",
+        "name": "Auth",
+        "description": "Operations with authentication. **No authorization required.**",
     },
     {
         "name": "User",
         "description": "Operations with users. **No authorization required.**",
     },
     {
-        "name": "Auth",
-        "description": "Operations with authentication. **No authorization required.**",
+        "name": "Project",
+        "description": "Operations with projects. **Authorization required.**",
+    },
+    {
+        "name": "Project Management",
+        "description": "Operations with project collaborators. **Authorization required.**",
     },
 ]
 
@@ -60,5 +65,6 @@ app.add_middleware(
 app.include_router(project_router)
 app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(project_management_router)
 
 initialize_database()

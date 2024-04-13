@@ -1,4 +1,5 @@
-from sqlmodel import Session
+from fastapi import HTTPException
+from sqlmodel import Session, or_, select
 from schemas.user import UserCreate
 from models import User
 from database import commit_and_handle_exception, refresh_and_handle_exception
@@ -18,3 +19,12 @@ class UserService:
         commit_and_handle_exception(session)
         refresh_and_handle_exception(session, new_user)
         return new_user
+
+    def select_user_by_email_or_username_db(self, user: str, session: Session):
+        query = select(User).where(or_(User.username == user, User.email == user))
+        user = session.exec(query).first()
+
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return user
