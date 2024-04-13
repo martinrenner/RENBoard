@@ -16,6 +16,11 @@ class ProjectService:
         statement = select(Project).where(Project.user_id == user_id)
         projects = session.exec(statement).all()
         return projects
+    
+    def select_all_projects_member_db(self, user_id: int, session: Session):
+        statement = select(Member).where(and_(Member.user_id == user_id, Member.accepted.is_(True)))
+        members = session.exec(statement).all()
+        return [member.project for member in members]
 
     def select_project_by_id_db(self, project_id: int, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
@@ -24,8 +29,12 @@ class ProjectService:
 
     def insert_project_db(self, project_create: ProjectCreate, user_id: int, session: Session):
         new_project = Project(
-            name=project_create.name.strip(), description=project_create.description.strip(), customer=project_create.customer.strip(), user_id=user_id
+            name=project_create.name.strip(), 
+            description=project_create.description.strip(), 
+            user_id=user_id
         )
+        if project_create.customer is not None:
+            new_project.customer = project_create.customer.strip()
         session.add(new_project)
         flush_and_handle_exception(session)
 
@@ -56,6 +65,13 @@ class ProjectService:
         project = self._get_project_by_id(project_id, session)
         self._check_project_access(project, user_id)
         user = user_service.select_user_by_email_or_username_db(member, session)
+
+        statement = select(Member).where(Member.user_id == user.id, Member.project_id == project_id)
+        member = session.exec(statement).first()
+
+        if member is not None:
+            raise HTTPException(status_code=400, detail="User is already a member or has invite to this project")
+
         new_member = Member(
             user_id=user.id, project_id=project_id, accepted=False
         )
@@ -75,6 +91,11 @@ class ProjectService:
         
         session.delete(member)
         commit_and_handle_exception(session)
+
+    def get_project_members_db(self, project_id: int, user_id: int, session: Session):
+        project = self._get_project_by_id(project_id, session)
+        self._check_project_access(project, user_id)
+        return [member.user for member in project.teams]
 
     def decision_member_db(self, project_id: int, decision: bool, user_id: int, session: Session):
         print(user_id)

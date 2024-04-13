@@ -29,4 +29,9 @@ class ProjectRead(ProjectBase):
 
     @classmethod
     def from_project(cls, project: Project):
-        return cls(id=project.id, name=project.name, description=project.description, customer=project.customer, created_at=project.created_at)
+        return cls(
+            id=project.id, 
+            name=project.name, 
+            description=project.description, 
+            customer=project.customer if project.customer is not None else "",
+            created_at=project.created_at)

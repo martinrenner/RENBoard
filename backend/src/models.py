@@ -16,8 +16,8 @@ class Project(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     user: "User" = Relationship(back_populates="projects")
 
-    teams: List["Member"] = Relationship(back_populates="project")
-    runs: List["Run"] = Relationship(back_populates="project")
+    teams: List["Member"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    runs: List["Run"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 
 class User(SQLModel, table=True):
@@ -30,8 +30,8 @@ class User(SQLModel, table=True):
     email: str = Field(sa_column=Column(VARCHAR, unique=True))
     hashed_password: str
 
-    projects: List["Project"] = Relationship(back_populates="user")
-    members: List["Member"] = Relationship(back_populates="user")
+    projects: List["Project"] = Relationship(back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    members: List["Member"] = Relationship(back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 
 class Member(SQLModel, table=True):
@@ -61,8 +61,8 @@ class Run(SQLModel, table=True):
     project_id: int = Field(foreign_key="project.id")
 
     project: Project = Relationship(back_populates="runs")
-    tasks: List["Task"] = Relationship(back_populates="run")
-    statuses: List["Status"] = Relationship(back_populates="run")
+    tasks: List["Task"] = Relationship(back_populates="run", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    statuses: List["Status"] = Relationship(back_populates="run", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 
 class Status(SQLModel, table=True):
@@ -74,7 +74,7 @@ class Status(SQLModel, table=True):
     run_id: int = Field(foreign_key="run.id")
 
     run: Run = Relationship(back_populates="statuses")
-    tasks: List["Task"] = Relationship(back_populates="status")
+    tasks: List["Task"] = Relationship(back_populates="status", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 
 class Priority(SQLModel, table=True):
@@ -84,7 +84,7 @@ class Priority(SQLModel, table=True):
     name: str
     color: str
 
-    tasks: List["Task"] = Relationship(back_populates="priority")
+    tasks: List["Task"] = Relationship(back_populates="priority", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 
 class Task(SQLModel, table=True):
