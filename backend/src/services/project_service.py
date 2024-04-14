@@ -13,18 +13,13 @@ user_service = UserService()
 
 class ProjectService:
     def select_all_projects_db(self, user_id: int, session: Session):
-        statement = select(Project).where(Project.user_id == user_id)
+        statement = select(Project).join(Member, Project.id == Member.project_id).where(and_(Member.user_id == user_id, Member.accepted))
         projects = session.exec(statement).all()
         return projects
-    
-    def select_all_projects_member_db(self, user_id: int, session: Session):
-        statement = select(Member).where(and_(Member.user_id == user_id, Member.accepted.is_(True)))
-        members = session.exec(statement).all()
-        return [member.project for member in members]
 
     def select_project_by_id_db(self, project_id: int, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access(project, user_id)
+        self._check_project_access_member(project, user_id)
         return project
 
     def insert_project_db(self, project_create: ProjectCreate, user_id: int, session: Session):
@@ -39,7 +34,7 @@ class ProjectService:
         flush_and_handle_exception(session)
 
         new_member = Member(
-            user_id=user_id, project_id=new_project.id, accepted=True, date_started=datetime.utcnow()
+            user_id=user_id, project_id=new_project.id, accepted=True, date_started=datetime.today()
         )
         
         session.add(new_member)
@@ -49,13 +44,13 @@ class ProjectService:
 
     def delete_project_by_id_db(self, project_id: int, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access(project, user_id)
+        self._check_project_access_owner(project, user_id)
         session.delete(project)
         commit_and_handle_exception(session)
 
     def update_project_by_id_db(self, project_id: int, project_update: ProjectUpdate, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access(project, user_id)
+        self._check_project_access_owner(project, user_id)
         update_object_attributes(project, list(Project.model_json_schema()["properties"].keys()), project_update)
         commit_and_handle_exception(session)
         refresh_and_handle_exception(session, project)
@@ -63,7 +58,7 @@ class ProjectService:
     
     def add_member_to_project_db(self, project_id: int, member: str, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access(project, user_id)
+        self._check_project_access_owner(project, user_id)
         user = user_service.select_user_by_email_or_username_db(member, session)
 
         statement = select(Member).where(Member.user_id == user.id, Member.project_id == project_id)
@@ -80,7 +75,7 @@ class ProjectService:
 
     def remove_member_from_project_db(self, project_id: int, member: str, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access(project, user_id)
+        self._check_project_access_owner(project, user_id)
         user = user_service.select_user_by_email_or_username_db(member, session)
 
         statement = select(Member).where(Member.user_id == user.id, Member.project_id == project_id)
@@ -94,11 +89,10 @@ class ProjectService:
 
     def get_project_members_db(self, project_id: int, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access(project, user_id)
-        return [member.user for member in project.teams]
+        self._check_project_access_member(project, user_id)
+        return project.teams
 
     def decision_member_db(self, project_id: int, decision: bool, user_id: int, session: Session):
-        print(user_id)
         self._get_project_by_id(project_id, session)
         statement = select(Member).where(and_(Member.user_id == user_id, Member.project_id == project_id, Member.accepted.is_(False)))
         member = session.exec(statement).first()
@@ -108,19 +102,16 @@ class ProjectService:
         
         if decision:
             member.accepted = True
-            member.date_started = datetime.utcnow()
+            member.date_started = datetime.today()
         else:
             session.delete(member)
         commit_and_handle_exception(session)
 
     def leave_project_db(self, project_id: int, user_id: int, session: Session):
-        self._get_project_by_id(project_id, session)
-        statement = select(Member).where(and_(Member.user_id == user_id, Member.project_id == project_id, Member.accepted.is_(True)))
+        project = self._get_project_by_id(project_id, session)
+        self._check_project_access_member(project, user_id)
+        statement = select(Member).where(and_(Member.user_id == user_id, Member.project_id == project_id, Member.accepted))
         member = session.exec(statement).first()
-        
-        if member is None:
-            raise HTTPException(status_code=404, detail="User is not member of this project")
-        
         session.delete(member)
         commit_and_handle_exception(session)
 
@@ -130,6 +121,10 @@ class ProjectService:
             raise HTTPException(status_code=404, detail="Project not found")
         return project
 
-    def _check_project_access(self, project: Project, user_id: int):
+    def _check_project_access_member(self, project: Project, user_id: int):
+        if project.user_id != user_id and not any([member.user_id == user_id and member.accepted for member in project.teams]):
+            raise HTTPException(status_code=403, detail="Forbidden - Not Member")
+        
+    def _check_project_access_owner(self, project: Project, user_id: int):
         if project.user_id != user_id:
-            raise HTTPException(status_code=403, detail="Forbidden")
+            raise HTTPException(status_code=403, detail="Forbidden - Not Owner")

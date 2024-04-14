@@ -61,10 +61,10 @@ def read_all_projects(user: user_dependency, session: db_dependency):
     return [ProjectRead.from_project(project) for project in projects]
 
 
-@project_router.put("/{project_id}/update", response_model=ProjectRead)
+@project_router.patch("/{project_id}/update", response_model=ProjectRead)
 def update_project(project_id: int, project_update: ProjectUpdate, user: user_dependency, session: db_dependency):
     """
-    ## Update a project (full)
+    ## Update a project
 
     This endpoint will update a project in the database.
 

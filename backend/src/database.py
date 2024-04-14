@@ -21,7 +21,6 @@ def commit_and_handle_exception(session: Session):
     try:
         session.commit()
     except IntegrityError as e:
-        print(e)
         if 'unique constraint' in str(e.orig).lower():
             raise HTTPException(status_code=409, detail=f"{e.orig.diag.message_detail}")
         else:

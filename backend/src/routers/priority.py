@@ -18,10 +18,12 @@ priority_service = PriorityService()
 @priority_router.get("/", response_model=list[PriorityRead])
 def read_all_priorities(user: user_dependency, session: db_dependency):
     """
-    Retrieve all priorities from the database.
+    ## Read All Priorities
+
+    Retrieve all priorities for tasks.
 
     Returns:
-        List[PriorityRead]: A list of PriorityRead objects representing the retrieved priorities.
+    - `List[PriorityRead]`: A list of PriorityRead objects representing the retrieved priorities.
     """
     priorities = priority_service.select_all_prorities_db(session)
     return [PriorityRead.from_priority(priority) for priority in priorities]

@@ -22,6 +22,8 @@ auth_service = AuthService()
 @auth_router.post("/token", response_model=TokenRead)
 def token_user(user_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: db_dependency):
     """
+    ## Token User (**login**)
+
     Generate a token for the authenticated user.
 
     - **user_data (OAuth2PasswordRequestForm)**: The user's authentication data.
@@ -37,8 +39,10 @@ def token_user(user_data: Annotated[OAuth2PasswordRequestForm, Depends()], sessi
 
 
 @auth_router.post("/refresh", response_model=TokenRead)
-def refresh_token_user(token: str, session: db_dependency):
+def refresh_token(token: str, session: db_dependency):
     """
+    ## Refresh Token
+
     Refreshes the access token for a user.
 
     - **token (str)**: The refresh token provided by the user.

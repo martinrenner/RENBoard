@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel, BIGINT, VARCHAR
 from sqlalchemy import TEXT, Column
-from datetime import datetime
+from datetime import date
 
 
 class Project(SQLModel, table=True):
@@ -11,11 +11,11 @@ class Project(SQLModel, table=True):
     name: str
     description: str
     customer: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: date = Field(default_factory=date.today)
 
     user_id: int = Field(foreign_key="user.id")
-    user: "User" = Relationship(back_populates="projects")
 
+    user: "User" = Relationship(back_populates="projects")
     teams: List["Member"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     runs: List["Run"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
@@ -38,8 +38,8 @@ class Member(SQLModel, table=True):
     __tablename__ = "member"
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
-    date_started: Optional[datetime] = None
-    date_finished: Optional[datetime] = None
+    date_started: Optional[date] = None
+    date_finished: Optional[date] = None
     accepted: bool = False                                                                     #representing status: 0: pending, 1: active
 
     user_id: int = Field(foreign_key="user.id")
@@ -55,8 +55,8 @@ class Run(SQLModel, table=True):
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str
     description: str
-    date_started: datetime
-    date_finished: Optional[datetime] = None
+    date_started: date
+    date_finished: Optional[date] = None
 
     project_id: int = Field(foreign_key="project.id")
 
@@ -70,6 +70,7 @@ class Status(SQLModel, table=True):
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str
+    order: int
 
     run_id: int = Field(foreign_key="run.id")
 
