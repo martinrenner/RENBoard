@@ -41,7 +41,6 @@ class Status(SQLModel, table=True):
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str
-    order: int
 
     run_id: int = Field(foreign_key="run.id")
 

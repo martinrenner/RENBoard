@@ -11,7 +11,6 @@ class StatusService:
         self._check_permission(project_id, run_id, user_id, session)
         status = Status(
             name=status_create.name,
-            order=status_create.order,
             run_id=run_id
         )
         session.add(status)
