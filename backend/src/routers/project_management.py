@@ -87,7 +87,7 @@ def leave_project(project_id: int, user: user_dependency, session: db_dependency
     project_service.leave_project_db(project_id, user.id, session)
     DefaultBase.from_default(message="User successfully left the project.")
 
-@project_management_router.get("/", response_model=list[ProjectRead])
+@project_management_router.get("/my-projects", response_model=list[ProjectRead])
 def read_all_current_projects(user: user_dependency, session: db_dependency):
     """
     Retrieve all projects that the user is a member of.

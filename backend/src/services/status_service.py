@@ -1,0 +1,3 @@
+
+class StatusService:
+    pass

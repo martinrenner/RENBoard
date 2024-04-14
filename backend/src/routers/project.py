@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
+from schemas.default import DefaultBase
 from tokens.access_token import AccessToken
 from services.project_service import ProjectService
 from schemas.project import ProjectRead, ProjectCreate, ProjectUpdate
@@ -57,11 +58,10 @@ def read_all_projects(user: user_dependency, session: db_dependency):
     - `projects`: List of project objects
     """
     projects = project_service.select_all_projects_db(user.id, session)
-    print(projects)
     return [ProjectRead.from_project(project) for project in projects]
 
 
-@project_router.put("/{project_id}", response_model=ProjectRead)
+@project_router.put("/{project_id}/update", response_model=ProjectRead)
 def update_project(project_id: int, project_update: ProjectUpdate, user: user_dependency, session: db_dependency):
     """
     ## Update a project (full)
@@ -78,7 +78,7 @@ def update_project(project_id: int, project_update: ProjectUpdate, user: user_de
     return ProjectRead.from_project(updated_project)
 
 
-@project_router.delete("/{project_id}")
+@project_router.delete("/{project_id}/delete", response_model=DefaultBase)
 def delete_project(project_id: int, user: user_dependency, session: db_dependency):
     """
     ## Delete a project
@@ -91,4 +91,4 @@ def delete_project(project_id: int, user: user_dependency, session: db_dependenc
     - `message`: Message indicating that the project was deleted
     """
     project_service.delete_project_by_id_db(project_id, user.id, session)
-    return {"message": "Project deleted"}
+    return DefaultBase.from_default("Project deleted")

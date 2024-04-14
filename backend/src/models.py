@@ -81,8 +81,8 @@ class Priority(SQLModel, table=True):
     __tablename__ = "priority"
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
-    name: str
-    color: str
+    name: str = Field(sa_column=Column(VARCHAR, unique=True))
+    color: str = Field(sa_column=Column(VARCHAR, unique=True))
 
     tasks: List["Task"] = Relationship(back_populates="priority", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
