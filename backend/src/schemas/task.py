@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from schemas.priority import PriorityRead
@@ -12,7 +13,6 @@ class TaskBase(BaseModel):
 class TaskCreate(TaskBase):
     name: str = Field(..., examples=["Task name"], min_length=3, max_length=100)
     description: str = Field(..., examples=["Task description"], min_length=3, max_length=1000)
-    expected_duration_hours: int = Field(..., examples=[1], ge=1)
     status_id: int = Field(..., examples=[1], ge=1)
     priority_id: int = Field(..., examples=[1], ge=1)
 
@@ -20,7 +20,6 @@ class TaskCreate(TaskBase):
 class TaskUpdate(TaskBase):
     name: Optional[str] = Field(None, examples=["Project name"], min_length=3, max_length=100)
     description: Optional[str] = Field(None, examples=["Project description"], min_length=3, max_length=1000)
-    expected_duration_hours: Optional[int] = Field(None, examples=[1], ge=1)
     status_id: Optional[int] = Field(None, examples=[1], ge=1)
     priority_id: Optional[int] = Field(None, examples=[1], ge=1)
 
@@ -29,7 +28,8 @@ class TaskRead(TaskBase):
     id: int
     name: str
     description: str
-    expected_duration_hours: int
+    date_created: date
+    date_finished: Optional[date] = None
     status: StatusRead
     priority: PriorityRead
 
@@ -39,7 +39,8 @@ class TaskRead(TaskBase):
             id=task.id,
             name=task.name,
             description=task.description,
-            expected_duration_hours=task.expected_duration_hours,
+            date_created=task.date_created,
+            date_finished=task.date_finished if task.date_finished is not None else None,
             status=StatusRead.from_status(task.status),
             priority=PriorityRead.from_priority(task.priority)
         )

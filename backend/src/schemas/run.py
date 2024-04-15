@@ -14,7 +14,7 @@ class RunCreate(RunBase):
     name: str = Field(..., examples=["Run name"], min_length=3, max_length=100)
     description: str = Field(..., examples=["Run description"], min_length=3, max_length=1000)
     date_started: date = Field(..., examples=["2021-05-01"])
-    date_finished: Optional[date] = Field(None, examples=["2021-06-01"])
+    date_finished: date = Field(..., examples=["2021-06-01"])
 
 class RunUpdate(RunBase):
     name: Optional[str] = Field(None, examples=["Run name"], min_length=3, max_length=100)

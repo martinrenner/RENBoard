@@ -25,7 +25,8 @@ class Task(SQLModel, table=True):
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str 
     description: str = Field(sa_column=Column(TEXT))
-    expected_duration_hours: int
+    date_created: date
+    date_finished: Optional[date] = None
     
     run_id: int = Field(foreign_key="run.id")
     status_id: int = Field(foreign_key="status.id")
@@ -55,7 +56,7 @@ class Run(SQLModel, table=True):
     name: str
     description: str
     date_started: date
-    date_finished: Optional[date] = None
+    date_finished: date
 
     project_id: int = Field(foreign_key="project.id")
 

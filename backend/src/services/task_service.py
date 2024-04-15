@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import HTTPException
 from sqlmodel import Session, and_, select
 from helpers import update_object_attributes
@@ -15,11 +16,16 @@ class TaskService:
         task = Task(
             name=task_create.name,
             description=task_create.description,
-            expected_duration_hours=task_create.expected_duration_hours,
+            date_created=datetime.today().date(),
             run_id=run_id,
             status_id=task_create.status_id,
             priority_id=task_create.priority_id
         )
+
+        run = session.get(Run, run_id)
+        if task.status_id == run.statuses[-1].id:
+            task.date_finished = datetime.today()
+            
         session.add(task)
         commit_and_handle_exception(session)
         return task
@@ -45,6 +51,11 @@ class TaskService:
         task = self._select_task_by_id(project_id, run_id, task_id, session)
         self._check_task(task)
         update_object_attributes(task, list(Task.model_json_schema()["properties"].keys()), task_update)
+
+        run = session.get(Run, run_id)
+        if task.status_id == run.statuses[-1].id:
+            task.date_finished = datetime.today()
+
         commit_and_handle_exception(session)
         refresh_and_handle_exception(session, task)
         return task

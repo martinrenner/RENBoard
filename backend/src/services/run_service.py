@@ -14,7 +14,7 @@ class RunService:
             name=run_create.name,
             description=run_create.description,
             date_started=run_create.date_started,
-            date_finished=run_create.date_finished if run_create.date_finished else None,
+            date_finished=run_create.date_finished,
             project_id=project_id
         )
         session.add(run)

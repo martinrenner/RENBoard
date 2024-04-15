@@ -9,6 +9,11 @@ from schemas.status import StatusCreate, StatusUpdate
 class StatusService:
     def insert_status_db(self, project_id: int, run_id: int, status_create: StatusCreate, user_id: int, session: Session):
         self._check_permission(project_id, run_id, user_id, session)
+
+        run = session.get(Run, run_id)
+        if len(run.tasks) > 0:
+            raise HTTPException(status_code=400, detail="Cannot create new status for run with tasks.")
+
         status = Status(
             name=status_create.name,
             run_id=run_id
