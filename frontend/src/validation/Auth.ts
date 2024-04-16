@@ -4,9 +4,9 @@ export function validateLoginForm(formData: LoginUser): { errors: { [key: string
     const errors: { [key: string]: string } = {};
 
     if (!formData.username) {
-        errors.username = "Email is required";
+        errors.username = "Username or Email is required";
     } else if (formData.username.length < 3 || formData.username.length > 100) {
-        errors.username = "Email must be between 3 and 100 characters";
+        errors.username = "Username or Email must be between 3 and 100 characters";
     }
   
     // Validate password

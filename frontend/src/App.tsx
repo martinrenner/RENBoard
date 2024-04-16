@@ -10,6 +10,7 @@ import TokenContextProvider from "./context/TokenContextProvider.tsx";
 import Authenticated from "./components/Authenticated/Authenticated.tsx";
 import Home from "./components/Home/Home.tsx";
 import Layout from "./Layout.tsx";
+import Learn from "./components/Learn/Learn.tsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -18,6 +19,7 @@ function App() {
       element: <Layout />,
       children: [
         { path: "", element: <Home /> },
+        { path: "learn", element: <Learn />},
         { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
         {
