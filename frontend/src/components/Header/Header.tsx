@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import TokenContext from "../../context/TokenContext";
 import { Container, Nav, Navbar } from "react-bootstrap";
@@ -6,12 +6,6 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 function Header() {
   const { isTokenValid, logout } = useContext(TokenContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isTokenValid()) {
-      navigate("/login", { replace: true });
-    }
-  }, [isTokenValid]);
 
   const handleLogout = () => {
     logout();
