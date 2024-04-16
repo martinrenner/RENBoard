@@ -3,6 +3,7 @@ import { Project } from "../../../interfaces/Project";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import TokenContext from "../../../context/TokenContext";
+import { DeleteProject, GetProject } from "../../../apis/project";
 
 function ProjectView() {
   const navigate = useNavigate();
@@ -12,43 +13,30 @@ function ProjectView() {
 
   useEffect(() => {
     if (isTokenValid()) {
-      fetch(`http://localhost:8000/project/${project_id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error("Failed to fetch project data");
+      const fetchData = async () => {
+        try {
+          if (project_id) {
+            const response = await GetProject(token, project_id);
+            setProject(response);
           }
-        })
-        .then((data) => {
-          setProject(data);
-        })
-        .catch((error) => {
-          navigate("/projects", { replace: true });
-          console.error("Error fetching project data:", error.message);
-        });
-    }
-  }, [token, isTokenValid, project_id, navigate]);
+          else 
+            throw new Error("Project ID not found");
+        } catch (error) {
+          console.error("Error fetching project data:", error);
+        }
+      };
 
-  const delete_project = (project_id: number) => {
-    fetch(`http://localhost:8000/project/${project_id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to delete project");
-      }
-      navigate("/projects", { replace: true });
-    });
+      fetchData();
+    }
+  }, [token, isTokenValid, project_id]);
+
+  const delete_project = async (project_id: number) => {
+    try {
+      await DeleteProject(token, project_id);
+      navigate("/projects");
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
   };
 
   return (
@@ -57,7 +45,7 @@ function ProjectView() {
         <>
           <h1>{project.name}</h1>
           <hr />
-          <p>Finished: {project.is_finished ? "Yes" : "No"}</p>
+          <p>Customer: {project.customer}</p>
           <p>{project.description}</p>
           <Link to={`/projects/${project.id}/edit`}>
             <Button variant="warning">Edit</Button>

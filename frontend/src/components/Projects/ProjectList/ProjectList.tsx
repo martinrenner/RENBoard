@@ -1,89 +1,37 @@
 import { useEffect, useState, useContext } from "react";
 import { Project } from "../../../interfaces/Project";
 import { Button, Card, Col, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TokenContext from "../../../context/TokenContext";
+import { DeleteProject, GetProjects } from "../../../apis/project";
 
 function ProjectList() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const { logout, token, isTokenValid } = useContext(TokenContext);
-  const navigate = useNavigate();
+  const { token, isTokenValid } = useContext(TokenContext);
+
 
   useEffect(() => {
     if (isTokenValid()) {
-      fetch("http://localhost:8000/project/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error("Failed to fetch projects data");
-        })
-        .then((data) => {
-          setProjects(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching projects data:", error.message);
-        });
+      const fetchData = async () => {
+        try {
+          const result = await GetProjects(token);
+          setProjects(result);
+        } catch (error) {
+          console.error("Error fetching project data:", error);
+        }
+      };
+  
+      fetchData();
     }
-  }, [token, isTokenValid, navigate]);
+  }, [token, isTokenValid]);
 
-  const delete_project = (project_id: number) => {
-    fetch(`http://localhost:8000/project/${project_id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Failed to delete project");
-        }
-      })
-      .then(() => {
-        setProjects(projects.filter((project) => project.id !== project_id));
-      })
-      .catch((error) => {
-        console.error("Error deleting project:", error);
-      });
-  };
-
-  const finish_project = (project_id: number) => {
-    fetch(`http://localhost:8000/project/${project_id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ is_finished: true }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Failed to finish project");
-        }
-      })
-      .then(() => {
-        setProjects(
-          projects.map((project) =>
-            project.id === project_id
-              ? { ...project, is_finished: true }
-              : project
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error finishing project:", error);
-      });
+  const delete_project = async (project_id: number) => {
+    try {
+      await DeleteProject(token, project_id);
+      setProjects(projects.filter((project) => project.id !== project_id));
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
   };
 
   return (
@@ -105,21 +53,10 @@ function ProjectList() {
         <Card key={project.id} className="mb-3">
           <Card.Body>
             <Row>
-              <Col>
-                <Card.Title>
-                  {project.name} -
-                  {project.is_finished ? " Finished" : " Not finished"}
-                </Card.Title>
+              <Col xs={10}>
+                <Card.Title>{project.name}</Card.Title>
               </Col>
               <Col xs={2} className="d-flex justify-content-end gap-2">
-                {!project.is_finished && (
-                  <Button
-                    variant="success"
-                    onClick={() => finish_project(project.id)}
-                  >
-                    Finish
-                  </Button>
-                )}
                 <Link to={`/projects/${project.id}`}>
                   <Button variant="primary">View</Button>
                 </Link>
@@ -135,7 +72,7 @@ function ProjectList() {
               </Col>
             </Row>
 
-            <Card.Text>{project.description}</Card.Text>
+            <Card.Text>{project.description} <b>({project.customer})</b></Card.Text>
           </Card.Body>
         </Card>
       ))}

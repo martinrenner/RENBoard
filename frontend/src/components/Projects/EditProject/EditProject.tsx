@@ -1,89 +1,74 @@
 import { ChangeEvent, useEffect, useState, useContext } from "react";
-import { Button, Form, FormControl } from "react-bootstrap";
+import { Alert, Button, Form, FormControl } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import TokenContext from "../../../context/TokenContext";
+import { validateProjectUpdateForm } from "../../../validation/Project";
+import { ProjectUpdate } from "../../../interfaces/Project";
+import { GetProject, UpdateProject } from "../../../apis/project";
 
-interface FormData {
-  name: string;
-  description: string;
-  is_finished: boolean;
-}
 
 function ProjectEdit() {
   const { project_id } = useParams();
   const { token, isTokenValid } = useContext(TokenContext);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ProjectUpdate>({
     name: "",
     description: "",
-    is_finished: false,
+    customer: null,
   });
 
   useEffect(() => {
     if (isTokenValid()) {
-      fetch(`http://localhost:8000/project/${project_id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error("Failed to fetch project data");
+      const fetchData = async () => {
+        try {
+          if (project_id) {
+            const response = await GetProject(token, project_id);
+            setFormData(response);
           }
-        })
-        .then((data) => {
-          setFormData({
-            name: data.name,
-            description: data.description,
-            is_finished: data.is_finished,
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching project data:", error.message);
-        });
-    }
-  }, [project_id, isTokenValid, token, navigate]);
+          else 
+            throw new Error("Project ID not found");
+        } catch (error) {
+          console.error("Error fetching project data:", error);
+        }
+      };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      fetchData();
+    }
+  }, [project_id, isTokenValid, token]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch(`http://localhost:8000/project/${project_id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to edit project");
+    const { errors, isValid } = validateProjectUpdateForm(formData);
+    setErrors(errors);
+
+    if (isValid) {
+      try {
+        if (project_id) {
+          await UpdateProject(token, project_id, formData);
+          navigate(`/projects/${project_id}`);
         }
-        return response.json();
-      })
-      .then((data) => {
-        navigate(`/projects/${data.id}`);
-      })
-      .catch((error) => {
+        else
+          throw new Error("Project ID not found");
+      }
+      catch (error) {
+        setErrorMessage("Update project failed");
         console.error("Error:", error);
-      });
+      }
+    }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({...formData, [name]: value});
   };
 
   return (
     <>
       <h1>Edit Project</h1>
+      {errorMessage && <Alert key="danger" variant="danger">{errorMessage}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group>
           <Form.Label>Project Name</Form.Label>
@@ -93,6 +78,7 @@ function ProjectEdit() {
             value={formData.name}
             onChange={handleInputChange}
           />
+          {errors.name && <div className="text-danger">{errors.name}</div>}
         </Form.Group>
         <Form.Group>
           <Form.Label>Description</Form.Label>
@@ -102,20 +88,17 @@ function ProjectEdit() {
             value={formData.description}
             onChange={handleInputChange}
           />
+          {errors.description && <div className="text-danger">{errors.description}</div>}
         </Form.Group>
         <Form.Group>
-          <Form.Check
-            type="checkbox"
-            label="Finished"
-            name="is_finished"
-            checked={formData.is_finished}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                is_finished: e.target.checked,
-              })
-            }
+          <Form.Label>Customer</Form.Label>
+          <FormControl
+            type="text"
+            name="customer"
+            value={formData.customer || ""}
+            onChange={handleInputChange}
           />
+          {errors.customer && <div className="text-danger">{errors.customer}</div>}
         </Form.Group>
         <Button variant="primary" type="submit" className="mt-3">
           Update
