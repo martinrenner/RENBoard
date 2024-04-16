@@ -23,7 +23,7 @@ class AuthService:
         return user
 
     def _verify_user(self, user_login: User, session: Session):
-        query = select(User).where(User.username == user_login.username.strip())
+        query = select(User).where(User.username == user_login.username.strip() or User.email == user_login.username.strip())
         user = session.exec(query).first()
         if not user:
             raise HTTPException(status_code=401, detail="Invalid user")

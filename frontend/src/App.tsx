@@ -1,44 +1,45 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import ProjectEdit from "./components/Projects/EditProject/EditProject.tsx";
+import ProjectView from "./components/Projects/ProjectView/ProjectView.tsx";
+import ProjectCreate from "./components/Projects/CreateProject/CreateProject.tsx";
+import ProjectList from "./components/Projects/ProjectList/ProjectList.tsx";
+import Login from "./components/Login/Login.tsx";
+import Register from "./components/Register/Register.tsx";
+import TokenContextProvider from "./context/TokenContextProvider.tsx";
+import Authenticated from "./components/Authenticated/Authenticated.tsx";
+import Home from "./components/Home/Home.tsx";
+import Layout from "./Layout.tsx";
 
 function App() {
-  const [count, setCount] = useState(0);
-  //const [data, setData] = useState(null);
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        { path: "", element: <Home /> },
+        { path: "login", element: <Login /> },
+        { path: "register", element: <Register /> },
+        {
+          path: "projects/",
+          children: [
+            { path: "create", element: <Authenticated><ProjectCreate /></Authenticated> },
+            { path: "", element: <Authenticated><ProjectList /></Authenticated> },
+            { path: ":project_id", element: <Authenticated><ProjectView /></Authenticated> },
+            { path: ":project_id/edit", element: <Authenticated><ProjectEdit /></Authenticated> },
+          ],
+        },
+        { path: "*", element: <div>Not Found</div> },
+      ],
+    },
+  ]);
 
-  useEffect(() => {
-    fetch("http://localhost:8000/")
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-      });
-  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>SWI APP</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <TokenContextProvider>
+        <RouterProvider router={router} />
+      </TokenContextProvider>
     </>
   );
 }
