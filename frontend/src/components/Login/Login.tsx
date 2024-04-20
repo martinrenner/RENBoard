@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, FormEvent, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TokenContext from "../../context/TokenContext";
-import { Alert, Button, Form, FormControl, FormGroup, FormText } from "react-bootstrap";
+import { Alert, Button, Card, Col, Container, Form, FormControl, FormGroup, FormText, Row } from "react-bootstrap";
 import { LoginUser } from "../../interfaces/Auth";
 import { validateLoginForm } from "../../validation/Auth";
 import { loginUser } from "../../apis/auth";
@@ -44,37 +44,52 @@ function LoginForm() {
 
   return (
     <>
-      <h1>Login</h1>
-      {errorMessage && <Alert key="danger" variant="danger">{errorMessage}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        <FormGroup>
-          <Form.Label>Username or Email</Form.Label>
-          <FormControl
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-          ></FormControl>
-          {errors.username && (
-            <FormText className="text-danger"> * {errors.username}</FormText>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Form.Label>Password</Form.Label>
-          <FormControl
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-          ></FormControl>
-          {errors.password && (
-            <FormText className="text-danger"> * {errors.password}</FormText>
-          )}
-        </FormGroup>
-        <Button variant="primary" type="submit" className="mt-3">
-          Login
-        </Button>
-      </Form>
+        <Container className="py-5 h-100">
+          <Row className="d-flex justify-content-center align-items-center h-100">
+            <Col md={8} lg={6} xl={5}>
+              <Card>
+                <Card.Body className="p-5">
+                  <h1>Login</h1>
+                  {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Group>
+                      <Form.Label>Username or Email</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                      />
+                      {errors.username && (
+                        <Form.Text className="text-danger"> * {errors.username}</Form.Text>
+                      )}
+                    </Form.Group>
+                    <Form.Group>
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                      />
+                      {errors.password && (
+                        <Form.Text className="text-danger"> * {errors.password}</Form.Text>
+                      )}
+                    </Form.Group>
+                    <Col className="d-flex align-items-center">
+                      <Button variant="primary" type="submit" className="mt-3 mr-3">
+                        Login
+                      </Button>
+                      <Form.Text className="text-muted mt-3 p-3">
+                        Don't have an account? <Link to="/register">Register here</Link>
+                      </Form.Text>
+                    </Col>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
     </>
   );
 }
