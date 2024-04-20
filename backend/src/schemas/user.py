@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, EmailStr
 from pydantic_core.core_schema import FieldValidationInfo
 from models import User
@@ -25,7 +26,7 @@ class UserCreate(UserBase):
 
 class UserLogin(UserBase):
     username: str
-    password: str
+    password: Optional[str] = None
 
 
 class UserRead(UserBase):

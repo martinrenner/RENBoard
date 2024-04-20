@@ -21,8 +21,8 @@ function Header() {
             <Nav.Link as={NavLink} to="/">
               Home
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/learn">
-              Learn
+            <Nav.Link as={NavLink} to="/help">
+              Help
             </Nav.Link>
             {isTokenValid() && (
               <Nav.Link as={NavLink} to="/projects">

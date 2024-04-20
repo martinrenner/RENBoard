@@ -13,6 +13,7 @@ bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class AuthService:
     def verify_user_and_password(self, user_data: OAuth2PasswordBearer, session: Session):
         user_data = UserLogin(username=user_data.username, password=user_data.password)
+        print(user_data)
         user = self._verify_user(user_data, session)
         self._verify_password(user_data.password, user.hashed_password)
         return user
@@ -22,8 +23,8 @@ class AuthService:
         user = self._verify_user(user_data, session)
         return user
 
-    def _verify_user(self, user_login: User, session: Session):
-        query = select(User).where(or_(User.username == user_login.username.strip(), User.email == user_login.username.strip()))
+    def _verify_user(self, user: User, session: Session):
+        query = select(User).where(or_(User.username == user.username.strip(), User.email == user.username.strip()))
         user = session.exec(query).first()
         if not user:
             raise HTTPException(status_code=401, detail="Invalid user")

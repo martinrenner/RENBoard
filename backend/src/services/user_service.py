@@ -28,3 +28,12 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
 
         return user
+    
+    def select_user_by_email_db(self, user: str, session: Session):
+        query = select(User).where(User.email == user)
+        user = session.exec(query).first()
+
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return user

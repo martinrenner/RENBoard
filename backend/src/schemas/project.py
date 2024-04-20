@@ -1,8 +1,10 @@
 from datetime import date
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
-from schemas.run import RunRead
-from models import Project
+from schemas.task import TaskRead
+from schemas.tag import TagRead
+from schemas.sprint import SprintRead
+from models import Member, Project
 
 
 class ProjectBase(BaseModel):
@@ -13,12 +15,14 @@ class ProjectCreate(ProjectBase):
     name: str = Field(..., examples=["Project name"], min_length=3, max_length=100)
     description: str = Field(..., examples=["Project description"], min_length=3, max_length=1000)
     customer: Optional[str] = Field(None, examples=["Customer name"], min_length=3, max_length=100)
+    tag_id: int = Field(..., examples=[1], ge=1)
 
 
 class ProjectUpdate(ProjectBase):
     name: Optional[str] = Field(None, examples=["Project name"], min_length=3, max_length=100)
     description: Optional[str] = Field(None, examples=["Project description"], min_length=3, max_length=1000)
     customer: Optional[str] = Field(None, examples=["Customer name"], min_length=3, max_length=100)
+    tag_id: Optional[int] = Field(None, examples=[1], ge=1)
 
 
 class ProjectRead(ProjectBase):
@@ -26,18 +30,38 @@ class ProjectRead(ProjectBase):
     name: str
     description: str
     customer: str
+    tag: TagRead
     owner_id: int
     created_at: date
-    runs: list[RunRead]
+    sprints: list[SprintRead]
+    tasks: list[TaskRead]
 
     @classmethod
     def from_project(cls, project: Project):
         return cls(
             id=project.id, 
             name=project.name, 
-            description=project.description, 
+            description=project.description,
+            tag=TagRead.from_tag(project.tag),
             owner_id=project.user_id,
             customer=project.customer if project.customer is not None else "",
             created_at=project.created_at,
-            runs=[RunRead.from_run(run) for run in project.runs]
+            sprints=[SprintRead.from_sprint(sprint) for sprint in project.sprints],
+            tasks=[TaskRead.from_task(task) for task in project.tasks if task.sprint_id is None]
+        )
+
+
+class ProjectMemberRead(ProjectBase):
+    id: int
+    name: str
+    is_owner: bool
+    is_accepted: bool
+
+    @classmethod
+    def from_member(cls, member: Member):
+        return cls(
+            id=member.project.id, 
+            name=member.project.name,
+            is_owner=member.project.user_id == member.user_id,
+            is_accepted=member.accepted
         )

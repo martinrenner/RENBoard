@@ -1,13 +1,14 @@
 from database import commit_and_handle_exception, engine
 from sqlmodel import SQLModel, Session
 from sqlalchemy.engine import reflection
-from models import Priority  # noqa: F401
+from models import Priority, Tag
 
 
 def initialize_database():
     if not _db_initialized():
         SQLModel.metadata.create_all(engine)
         _add_priority()
+        _add_tags()
 
 def _db_initialized():
     inspector = reflection.Inspector.from_engine(engine)
@@ -16,11 +17,24 @@ def _db_initialized():
 
 def _add_priority():
     priorities = [
-        Priority(name="Low", color="#00FF00"),
-        Priority(name="Medium", color="#FFFF00"),
-        Priority(name="High", color="#FF0000"),
+        Priority(name="Low", points=1, color="#00FF00"),
+        Priority(name="Medium", points=3, color="#FFFF00"),
+        Priority(name="High", points=5, color="#FF0000"),
     ]
     with Session(engine) as session:
         session.add_all(priorities)
+        commit_and_handle_exception(session)
+
+def _add_tags():
+    tags = [
+        Tag(name="Development"),
+        Tag(name="Business"),
+        Tag(name="Design"),
+        Tag(name="Marketing"),
+        Tag(name="Management"),
+        Tag(name="Education")
+    ]
+    with Session(engine) as session:
+        session.add_all(tags)
         commit_and_handle_exception(session)
     

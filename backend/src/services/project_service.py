@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import HTTPException
 from services.user_service import UserService
-from models import Member, Project
+from models import Member, Project, Tag
 from sqlmodel import Session, and_, select
 from schemas.project import ProjectCreate, ProjectUpdate
 from database import commit_and_handle_exception, flush_and_handle_exception, refresh_and_handle_exception
@@ -23,9 +23,12 @@ class ProjectService:
         return project
 
     def insert_project_db(self, project_create: ProjectCreate, user_id: int, session: Session):
+        self._check_project_tag(project_create.tag_id, session)
+
         new_project = Project(
             name=project_create.name.strip(), 
             description=project_create.description.strip(), 
+            tag_id=project_create.tag_id,
             user_id=user_id
         )
         if project_create.customer is not None:
@@ -38,7 +41,6 @@ class ProjectService:
         )
         
         session.add(new_member)
-
         commit_and_handle_exception(session)
         return new_project
 
@@ -72,6 +74,7 @@ class ProjectService:
         )
         session.add(new_member)
         commit_and_handle_exception(session)
+        return new_member
 
     def remove_member_from_project_db(self, project_id: int, member: str, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
@@ -89,7 +92,7 @@ class ProjectService:
 
     def get_project_members_db(self, project_id: int, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
-        self._check_project_access_member(project, user_id)
+        self._check_project_access_owner(project, user_id)
         return project.teams
 
     def decision_member_db(self, project_id: int, decision: bool, user_id: int, session: Session):
@@ -110,10 +113,23 @@ class ProjectService:
     def leave_project_db(self, project_id: int, user_id: int, session: Session):
         project = self._get_project_by_id(project_id, session)
         self._check_project_access_member(project, user_id)
+
+        if project.user_id == user_id:
+            raise HTTPException(status_code=400, detail="Owner cannot leave the project")
+        
         statement = select(Member).where(and_(Member.user_id == user_id, Member.project_id == project_id, Member.accepted))
         member = session.exec(statement).first()
+
+        if member is None:
+            raise HTTPException(status_code=404, detail="User is not member of this project")
+
         session.delete(member)
         commit_and_handle_exception(session)
+
+    def select_all_projects_member_db(self, user_id: int, session: Session):
+        statement = select(Member).join(Project, Project.id == Member.project_id).where(and_(Member.user_id == user_id))
+        members = session.exec(statement).all()
+        return members
 
     def _get_project_by_id(self, project_id: int, session: Session):
         project = session.get(Project, project_id)
@@ -128,3 +144,9 @@ class ProjectService:
     def _check_project_access_owner(self, project: Project, user_id: int):
         if project.user_id != user_id:
             raise HTTPException(status_code=403, detail="Forbidden - Not Owner")
+        
+    def _check_project_tag(self, tag_id: int, session: Session):
+        tag = session.get(Tag, tag_id)
+        if tag is None:
+            raise HTTPException(status_code=404, detail="Tag not found")
+        return tag

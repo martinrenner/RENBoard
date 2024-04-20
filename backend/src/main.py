@@ -4,10 +4,10 @@ from routers.project import project_router
 from routers.auth import auth_router
 from routers.user import user_router
 from routers.project_management import project_management_router
-from routers.run import run_router
+from routers.sprint import sprint_router
 from routers.task import task_router
-from routers.status import status_router
 from routers.priority import priority_router
+from routers.tag import tag_router
 from database_init import initialize_database
 import os
 
@@ -48,21 +48,21 @@ tags_metadata = [
         "description": "Operations with project collaborators. **Authorization required.**",
     },
     {
-        "name": "Run",
-        "description": "Operations with project runs. **Authorization required.**",
+        "name": "Sprint",
+        "description": "Operations with project sprints. **Authorization required.**",
     },
     {
         "name": "Task",
         "description": "Operations with project tasks. **Authorization required.**",
     },
     {
-        "name": "Status",
-        "description": "Operations with project statuses. **Authorization required.**",
-    },
-    {
         "name": "Priority",
         "description": "Operations with project priorities. **Authorization required.**",
-    }
+    },
+    {
+        "name": "Tag",
+        "description": "Operations with project tags. **Authorization required.**",
+    },
 ]
 
 app = FastAPI(
@@ -86,9 +86,9 @@ app.include_router(project_router)
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(project_management_router)
-app.include_router(run_router)
+app.include_router(sprint_router)
 app.include_router(task_router)
-app.include_router(status_router)
 app.include_router(priority_router)
+app.include_router(tag_router)
 
 initialize_database()

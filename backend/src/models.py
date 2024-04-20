@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel, BIGINT, VARCHAR, asc
-from sqlalchemy import TEXT, Column
+from sqlalchemy import TEXT, Column, Integer
 from datetime import date
 
 
@@ -9,8 +9,7 @@ class Member(SQLModel, table=True):
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     date_started: Optional[date] = None
-    date_finished: Optional[date] = None
-    accepted: bool = False                                                                     #representing status: 0: pending, 1: active
+    accepted: bool                                                                           #representing status: 0: pending, 1: active
 
     user_id: int = Field(foreign_key="user.id")
     project_id: int = Field(foreign_key="project.id")
@@ -28,13 +27,15 @@ class Task(SQLModel, table=True):
     date_created: date
     date_finished: Optional[date] = None
     
-    run_id: int = Field(foreign_key="run.id")
-    status_id: int = Field(foreign_key="status.id")
+    sprint_id: int = Field(foreign_key="sprint.id", nullable=True)
+    status_id: int = Field(foreign_key="status.id", nullable=True)
     priority_id: int = Field(foreign_key="priority.id")
+    project_id: int = Field(foreign_key="project.id")
     
-    run: "Run" = Relationship(back_populates="tasks")
+    sprint: "Sprint" = Relationship(back_populates="tasks")
     status: "Status" = Relationship(back_populates="tasks")
     priority: "Priority" = Relationship(back_populates="tasks")
+    project: "Project" = Relationship(back_populates="tasks")
 
 
 class Status(SQLModel, table=True):
@@ -43,14 +44,14 @@ class Status(SQLModel, table=True):
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str
 
-    run_id: int = Field(foreign_key="run.id")
+    sprint_id: int = Field(foreign_key="sprint.id")
 
-    run: "Run" = Relationship(back_populates="statuses")
+    sprint: "Sprint" = Relationship(back_populates="statuses")
     tasks: List["Task"] = Relationship(back_populates="status", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Task.id)})
 
 
-class Run(SQLModel, table=True):
-    __tablename__ = "run"
+class Sprint(SQLModel, table=True):
+    __tablename__ = "sprint"
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str
@@ -60,9 +61,18 @@ class Run(SQLModel, table=True):
 
     project_id: int = Field(foreign_key="project.id")
 
-    project: "Project" = Relationship(back_populates="runs")
-    tasks: List["Task"] = Relationship(back_populates="run", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Task.id)})
-    statuses: List["Status"] = Relationship(back_populates="run", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Status.id)})
+    project: "Project" = Relationship(back_populates="sprints")
+    tasks: List["Task"] = Relationship(back_populates="sprint", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Task.id)})
+    statuses: List["Status"] = Relationship(back_populates="sprint", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Status.id)})
+
+
+class Tag(SQLModel, table=True):
+    __tablename__ = "tag"
+
+    id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
+    name: str = Field(sa_column=Column(VARCHAR, unique=True))
+
+    projects: List["Project"] = Relationship(back_populates="tag", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Task.id)})
 
 
 class Project(SQLModel, table=True):
@@ -75,10 +85,13 @@ class Project(SQLModel, table=True):
     created_at: date = Field(default_factory=date.today)
 
     user_id: int = Field(foreign_key="user.id")
+    tag_id: int = Field(foreign_key="tag.id")
 
     user: "User" = Relationship(back_populates="projects")
+    tag: "Tag" = Relationship(back_populates="projects")
     teams: List["Member"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Member.id)})
-    runs: List["Run"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Run.id)})
+    sprints: List["Sprint"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Sprint.id)})
+    tasks: List["Task"] = Relationship(back_populates="project", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Task.id)})
 
 
 class User(SQLModel, table=True):
@@ -100,6 +113,7 @@ class Priority(SQLModel, table=True):
 
     id: int = Field(sa_column=Column(BIGINT, primary_key=True, autoincrement=True))
     name: str = Field(sa_column=Column(VARCHAR, unique=True))
+    points: int = Field(sa_column=Column(Integer), ge=1)
     color: str = Field(sa_column=Column(VARCHAR, unique=True))
 
     tasks: List["Task"] = Relationship(back_populates="priority", sa_relationship_kwargs={"cascade": "all, delete-orphan", "order_by": asc(Task.id)})

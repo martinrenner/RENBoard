@@ -30,7 +30,7 @@ class AccessToken(Token):
     def verify_token(token: Annotated[str, Depends(oaouth2_bearer)]):
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            email: str = payload.get("sub")
+            username: str = payload.get("sub")
             user_id: int = payload.get("id")
             exp: int = payload.get("exp")
             typ: str = payload.get("typ")
@@ -38,8 +38,8 @@ class AccessToken(Token):
             if exp is not None and exp < datetime.utcnow().timestamp():
                 raise HTTPException(status_code=401, detail="Access token expired")
 
-            if email is None or user_id is None or typ != "Access":
+            if username is None or user_id is None or typ != "Access":
                 raise HTTPException(status_code=401, detail="Invalid access token")
-            return User(email=email, id=user_id)
+            return User(username=username, id=user_id)
         except jwt.JWTError:
             raise HTTPException(status_code=401, detail="Invalid token")

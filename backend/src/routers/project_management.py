@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
+from schemas.project import ProjectMemberRead
 from schemas.member import MemberRead
 from schemas.default import DefaultBase
 from tokens.access_token import AccessToken
@@ -15,7 +16,7 @@ user_dependency = Annotated[dict, Depends(AccessToken.verify_token)]
 project_service = ProjectService()
 
 
-@project_management_router.post("/{project_id}/add-member", response_model=DefaultBase)
+@project_management_router.post("/{project_id}/add-member", response_model=MemberRead)
 def add_member_to_project(project_id: int, member: str, user: user_dependency, session: db_dependency):
     """
     ## Add Member to Project
@@ -28,8 +29,8 @@ def add_member_to_project(project_id: int, member: str, user: user_dependency, s
     Returns:
     - `message`: A message indicating the success of the operation.
     """
-    project_service.add_member_to_project_db(project_id, member, user.id, session)
-    return DefaultBase.from_default("User successfully invited to the project.")
+    member = project_service.add_member_to_project_db(project_id, member, user.id, session)
+    return MemberRead.from_member(member)
 
 @project_management_router.post("/{project_id}/remove-member", response_model=DefaultBase)
 def remove_member_from_project(project_id: int, member: str, user: user_dependency, session: db_dependency):
@@ -95,3 +96,16 @@ def leave_project(project_id: int, user: user_dependency, session: db_dependency
     """
     project_service.leave_project_db(project_id, user.id, session)
     return DefaultBase.from_default("Successfully left the project.")
+
+@project_management_router.get("/my-projects", response_model=list[ProjectMemberRead])
+def manage_my_projects(user: user_dependency, session: db_dependency):
+    """
+    ## Manage My Projects
+
+    Retrieve all projects that you are a member of (except projects that you are owner).
+
+    Returns:
+    - `projects`: A list of Project objects.
+    """
+    members = project_service.select_all_projects_member_db(user.id, session)
+    return [ProjectMemberRead.from_member(member) for member in members]
