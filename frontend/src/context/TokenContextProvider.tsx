@@ -8,9 +8,12 @@ interface TokenContextProviderProps {
 
 const TokenContextProvider = ({ children }: TokenContextProviderProps) => {
   const [token, setToken] = useState<string | null>();
+  const [username, setUsername] = useState<string | null>();
 
   const login = (newToken: string) => {
     setToken(newToken);
+    const decodedToken = jwtDecode(newToken);
+    setUsername(decodedToken.sub);
   };
 
   const logout = () => {
@@ -31,7 +34,7 @@ const TokenContextProvider = ({ children }: TokenContextProviderProps) => {
   };
 
   return (
-    <TokenContext.Provider value={{ token, login, logout, isTokenValid }}>
+    <TokenContext.Provider value={{ username, token, login, logout, isTokenValid }}>
       {children}
     </TokenContext.Provider>
   );

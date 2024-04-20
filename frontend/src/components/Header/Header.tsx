@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import TokenContext from "../../context/TokenContext";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 
 function Header() {
-  const { isTokenValid, logout } = useContext(TokenContext);
+  const { isTokenValid, logout, username  } = useContext(TokenContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -41,7 +41,10 @@ function Header() {
                 </Nav.Link>
               </>
             ) : (
-              <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+              <NavDropdown title={username}>
+                <NavDropdown.Item as={NavLink} to="/groups">Groups</NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+              </NavDropdown>
             )}
           </Nav>
         </Container>

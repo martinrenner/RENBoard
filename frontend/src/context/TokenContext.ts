@@ -1,6 +1,7 @@
 import React from "react";
 
 interface TokenContextType {
+    username: string | null | undefined;
     token: string | null | undefined;
     login: (newToken: string) => void,
     logout: () => void,
