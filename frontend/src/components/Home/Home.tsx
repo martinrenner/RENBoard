@@ -16,8 +16,14 @@ function Home() {
           </p>
           <Col className='mt-4 mb-4'>
             <Link to="/projects">
-              <Button variant="primary" size='lg'>
+              <Button variant="primary">
                 Try it out
+              </Button>
+            </Link>
+            {' '}
+            <Link to="/help">
+              <Button variant="outline-primary">
+                Help
               </Button>
             </Link>
           </Col>
