@@ -48,6 +48,7 @@ function CreateProjectForm(props: ModalProps) {
       try {
         const result = await CreateProject(token, formData);
         navigate(`/projects/${result.id}`);
+        props.onHide();
       } catch (error) {
         setErrorMessage("Create project failed");
         console.error("Error:", error);

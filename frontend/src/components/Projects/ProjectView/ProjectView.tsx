@@ -72,7 +72,7 @@ function ProjectView() {
             <Button onClick={handleEditProjectFormOpen} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
               Edit
             </Button>
-            <Button variant="primary" size="sm" className="rounded-pill" style={{height: '40px', width: '80px'}}>
+            <Button onClick={() => delete_project(project.id)} variant="primary" size="sm" className="rounded-pill" style={{height: '40px', width: '80px'}}>
               Delete
             </Button>
           </Col>
@@ -81,19 +81,9 @@ function ProjectView() {
           <Col>
             <p>Customer: {project.customer}</p>
             <p>{project.description}</p>
-            <Link to={`/projects/${project.id}/edit`}>
-              <Button variant="warning">Edit</Button>
-            </Link>
-            <Button
-              variant="danger"
-              onClick={() => delete_project(project.id)}
-              className="ms-2"
-            >
-              Delete
-            </Button>
           </Col>
         </Row>
-        <EditProjectForm show={showEditProjectForm} onHide={handleEditProjectFormClose}/>
+        <EditProjectForm show={showEditProjectForm} onHide={handleEditProjectFormClose} setData={setProject}/>
       </>
     )}
   </>

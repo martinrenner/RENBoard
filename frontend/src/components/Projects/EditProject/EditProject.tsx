@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState, useContext } from "react";
 import { Alert, Button, Form, FormControl, Modal } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TokenContext from "../../../context/TokenContext";
 import { validateProjectUpdateForm } from "../../../validation/Project";
 import { ProjectUpdate } from "../../../interfaces/Project";
@@ -9,12 +9,11 @@ import { Tag } from "../../../interfaces/Tag";
 import { GetTags } from "../../../apis/tags";
 
 
-function EditProjectForm(props: ModalProps) {
+function EditProjectForm(props: EditModalProps) {
   const { project_id } = useParams();
   const { token, isTokenValid } = useContext(TokenContext);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const navigate = useNavigate();
   const [ tags, setTags ] = useState<Tag[]>([]);
   const [formData, setFormData] = useState<ProjectUpdate>({
     name: "",
@@ -64,8 +63,9 @@ function EditProjectForm(props: ModalProps) {
     if (isValid) {
       try {
         if (project_id) {
-          await UpdateProject(token, project_id, formData);
-          navigate(`/projects/${project_id}`);
+          const project = await UpdateProject(token, project_id, formData);
+          props.setData(project);
+          props.onHide();
         }
         else
           throw new Error("Project ID not found");
