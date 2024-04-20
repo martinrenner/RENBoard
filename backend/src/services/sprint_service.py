@@ -34,6 +34,14 @@ class SprintService:
 
         commit_and_handle_exception(session)
         return sprint
+    
+    def assign_task_to_sprint_db(self, task_id: int, sprint_id: int, user_id: int, session: Session):
+        sprint = self._select_sprint_by_id(sprint_id, session)
+        self._check_sprint(sprint)
+        self._check_permission(sprint.project_id, user_id, session)
+        task = task_service.assign_task_to_sprint(task_id, sprint.statuses[0].id, session)
+        commit_and_handle_exception(session)
+        return task
 
     def select_sprint_by_id_db(self, sprint_id: int, user_id: int, session: Session):
         sprint = self._select_sprint_by_id(sprint_id, session)

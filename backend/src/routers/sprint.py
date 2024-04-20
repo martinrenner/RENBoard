@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
+from schemas.task import TaskRead
 from services.sprint_service import SprintService
 from schemas.default import DefaultBase
 from schemas.sprint import SprintCreate, SprintRead, SprintUpdate
@@ -46,6 +47,11 @@ def read_sprint(sprint_id: int, user: user_dependency, session: db_dependency):
     """
     sprint = sprint_service.select_sprint_by_id_db(sprint_id, user.id, session)
     return SprintRead.from_sprint(sprint)
+
+@sprint_router.post("/{sprint_id}/assign-task/", response_model=TaskRead)
+def assign_task_to_sprint(sprint_id: int, task_id: int, user: user_dependency, session: db_dependency):
+    task = sprint_service.assign_task_to_sprint_db(task_id, sprint_id, user.id, session)
+    return TaskRead.from_task(task)
 
 @sprint_router.patch("/{sprint_id}/update/", response_model=SprintRead)
 def update_sprint(sprint_id: int, sprint_update: SprintUpdate, user: user_dependency, session: db_dependency):

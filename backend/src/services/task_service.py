@@ -62,7 +62,9 @@ class TaskService:
             raise HTTPException(status_code=404, detail="Status not found")
         if status.sprint.project_id != task.project_id:
             raise HTTPException(status_code=404, detail="Status not found in the same project as the task")
-        if task.sprint is not None and status_id not in [status.id for status in task.sprint.statuses]:
+        if task.sprint_id is None:
+            raise HTTPException(status_code=400, detail="Task not assigned to a sprint")
+        if status_id not in [status.id for status in task.sprint.statuses]:
             raise HTTPException(status_code=404, detail="Status not found in the sprint of the task")
 
         task.sprint_id = status.sprint_id
@@ -91,6 +93,7 @@ class TaskService:
         task.sprint_id = status.sprint_id
         task.status_id = status_id
         session.add(task)
+        return task
 
     def _select_task_by_id(self, task_id: int, session: Session):
         statement = select(Task).where(Task.id == task_id)
