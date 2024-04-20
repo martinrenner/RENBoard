@@ -1,11 +1,13 @@
 import { useEffect, useState, useContext } from "react";
 import { Project } from "../../../interfaces/Project";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Badge, Breadcrumb, Button, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TokenContext from "../../../context/TokenContext";
-import { DeleteProject, GetProjects } from "../../../apis/project";
+import { GetProjects } from "../../../apis/project";
+import CreateProjectForm from "../CreateProject/CreateProject";
 
 function ProjectList() {
+  const [showCreateProjectForm, setShowCreateProjectForm] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { token, isTokenValid } = useContext(TokenContext);
 
@@ -25,57 +27,54 @@ function ProjectList() {
     }
   }, [token, isTokenValid]);
 
-  const delete_project = async (project_id: number) => {
-    try {
-      await DeleteProject(token, project_id);
-      setProjects(projects.filter((project) => project.id !== project_id));
-    } catch (error) {
-      console.error("Error deleting project:", error);
-    }
-  };
+  const handleCreateProjectFormOpen = () => {
+    setShowCreateProjectForm(true);
+  }
+
+  const handleCreateProjectFormClose = () => {
+    setShowCreateProjectForm(false);
+  }
 
   return (
     <>
       <Row>
+        <Breadcrumb>
+          <Breadcrumb.Item active>Projects</Breadcrumb.Item>
+        </Breadcrumb>
+      </Row>
+      <Row className="mb-4">
         <Col xs={10}>
           <h1>Projects</h1>
         </Col>
         <Col xs={2}>
-          <Link to="/projects/create">
-            <Button variant="primary" className="float-end">
-              Create project
-            </Button>
-          </Link>
+          <Button variant="primary" size="lg" className="float-end rounded-circle" onClick={handleCreateProjectFormOpen}>
+            +
+          </Button>
         </Col>
       </Row>
-
-      {projects.map((project) => (
-        <Card key={project.id} className="mb-3">
-          <Card.Body>
-            <Row>
-              <Col xs={10}>
-                <Card.Title>{project.name}</Card.Title>
-              </Col>
-              <Col xs={2} className="d-flex justify-content-end gap-2">
-                <Link to={`/projects/${project.id}`}>
-                  <Button variant="primary">View</Button>
+      <Row>
+        {projects.map((project) => (
+          <Col md={4} xl={3} className="mb-4 d-flex">
+            <Card key={project.id} className="flex-grow-1 d-flex flex-column">
+              <Card.Body className="d-flex flex-column">
+                <Card.Title>
+                  <h3>{project.name}</h3>
+                </Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">
+                  <Badge pill bg="primary">{project.tag.name}</Badge>
+                </Card.Subtitle>
+                <Card.Text className="mt-3 mb-3 flex-grow-1">
+                  {project.description.substring(0, 200)}{project.description.length > 200 && "..."}
+                </Card.Text>
+                <Link to={`/projects/${project.id}`} className="mt-auto">
+                  <Button variant="primary">Open</Button>
                 </Link>
-                <Link to={`/projects/${project.id}/edit`}>
-                  <Button variant="warning">Edit</Button>
-                </Link>
-                <Button
-                  variant="danger"
-                  onClick={() => delete_project(project.id)}
-                >
-                  Delete
-                </Button>
-              </Col>
-            </Row>
-
-            <Card.Text>{project.description} <b>({project.customer})</b></Card.Text>
-          </Card.Body>
-        </Card>
-      ))}
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+      <CreateProjectForm show={showCreateProjectForm} onHide={handleCreateProjectFormClose}/>
     </>
   );
 }

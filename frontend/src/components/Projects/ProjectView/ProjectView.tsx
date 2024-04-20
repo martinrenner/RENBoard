@@ -1,13 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import { Project } from "../../../interfaces/Project";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Breadcrumb, Button, Col, Row } from "react-bootstrap";
 import TokenContext from "../../../context/TokenContext";
 import { DeleteProject, GetProject } from "../../../apis/project";
+import EditProjectForm from "../EditProject/EditProject";
 
 function ProjectView() {
   const navigate = useNavigate();
   const { project_id } = useParams();
+  const [showEditProjectForm, setShowEditProjectForm] = useState<boolean>(false);
   const { token, isTokenValid } = useContext(TokenContext);
   const [project, setProject] = useState<Project>();
 
@@ -39,28 +41,63 @@ function ProjectView() {
     }
   };
 
+  const handleEditProjectFormOpen = () => {
+    setShowEditProjectForm(true);
+  }
+
+  const handleEditProjectFormClose = () => {
+    setShowEditProjectForm(false);
+  }
+
   return (
-    <>
-      {project && (
-        <>
-          <h1>{project.name}</h1>
-          <hr />
-          <p>Customer: {project.customer}</p>
-          <p>{project.description}</p>
-          <Link to={`/projects/${project.id}/edit`}>
-            <Button variant="warning">Edit</Button>
-          </Link>
-          <Button
-            variant="danger"
-            onClick={() => delete_project(project.id)}
-            className="ms-2"
-          >
-            Delete
-          </Button>
-        </>
-      )}
-    </>
-  );
+  <>
+    {project && (
+      <>
+        <Row>
+          <Breadcrumb>
+            <Link to="/projects" className="breadcrumb-item">
+              Projects
+            </Link>
+            <Breadcrumb.Item active>{project.name}</Breadcrumb.Item>
+          </Breadcrumb>
+        </Row>
+        <Row>
+          <Col md={8}>
+            <h1>{project.name}</h1>
+          </Col>
+          <Col md={4} className="d-flex justify-content-end align-items-center">
+            <Button variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+              Members  
+            </Button>
+            <Button onClick={handleEditProjectFormOpen} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+              Edit
+            </Button>
+            <Button variant="primary" size="sm" className="rounded-pill" style={{height: '40px', width: '80px'}}>
+              Delete
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <p>Customer: {project.customer}</p>
+            <p>{project.description}</p>
+            <Link to={`/projects/${project.id}/edit`}>
+              <Button variant="warning">Edit</Button>
+            </Link>
+            <Button
+              variant="danger"
+              onClick={() => delete_project(project.id)}
+              className="ms-2"
+            >
+              Delete
+            </Button>
+          </Col>
+        </Row>
+        <EditProjectForm show={showEditProjectForm} onHide={handleEditProjectFormClose}/>
+      </>
+    )}
+  </>
+);
 }
 
 export default ProjectView;

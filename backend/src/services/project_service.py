@@ -13,7 +13,7 @@ user_service = UserService()
 
 class ProjectService:
     def select_all_projects_db(self, user_id: int, session: Session):
-        statement = select(Project).join(Member, Project.id == Member.project_id).where(and_(Member.user_id == user_id, Member.accepted))
+        statement = select(Project).join(Member, Project.id == Member.project_id).where(and_(Member.user_id == user_id, Member.accepted)).order_by(Project.id)
         projects = session.exec(statement).all()
         return projects
 

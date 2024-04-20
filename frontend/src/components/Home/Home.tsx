@@ -1,4 +1,5 @@
 import { Row, Col, Button } from 'react-bootstrap';
+import { GraphDown, Kanban, LayoutThreeColumns, ListTask } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 
 function Home() {
@@ -31,12 +32,12 @@ function Home() {
         <Col md={12} className='mb-4'>
           <h2>Key Features</h2>
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
-            <Row>
-              <Col md={4}>
-                <i className="bi bi-clipboard-data fs-1 text-primary"></i>
+            <Row className='h-50'>
+              <Col md={4} className="text-center">
+                <Kanban size='100'/>
               </Col>
               <Col md={8}>
-                <h3>Interactive Kanban Board</h3>
+                <h3>Interactive Board</h3>
                 <p>
                   Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
                   lists to track the progress of your tasks and projects.
@@ -47,24 +48,24 @@ function Home() {
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row>
               <Col md={8}>
-                <h3>Interactive Kanban Board</h3>
+                <h3>Easily manage your tasks</h3>
                 <p>
                   Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
                   lists to track the progress of your tasks and projects.
                 </p>
               </Col>
-              <Col md={4}>
-                <i className="bi bi-clipboard-data fs-1 text-primary"></i>
+              <Col md={4} className="text-center">
+                <ListTask size='100'/>
               </Col>
             </Row>
           </Col>
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row>
-              <Col md={4}>
-                <i className="bi bi-clipboard-data fs-1 text-primary"></i>
+              <Col md={4} className="text-center">
+                <LayoutThreeColumns size='100'/>
               </Col>
               <Col md={8}>
-                <h3>Interactive Kanban Board</h3>
+                <h3>Custumisible columns</h3>
                 <p>
                   Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
                   lists to track the progress of your tasks and projects.
@@ -75,14 +76,14 @@ function Home() {
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row>
               <Col md={8}>
-                <h3>Interactive Kanban Board</h3>
+                <h3>Burndown chart</h3>
                 <p>
                   Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
                   lists to track the progress of your tasks and projects.
                 </p>
               </Col>
-              <Col md={4}>
-                <i className="bi bi-clipboard-data fs-1 text-primary"></i>
+              <Col md={4} className="text-center">
+                <GraphDown size='100'/>
               </Col>
             </Row>
           </Col>

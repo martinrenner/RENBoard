@@ -28,6 +28,7 @@ export const UpdateProject = async (token: string | null | undefined, project_id
         name: formData.name,
         description: formData.description,
         customer: formData.customer,
+        tag_id: formData.tag_id,
       })
     });
 
