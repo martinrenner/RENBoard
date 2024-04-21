@@ -46,8 +46,6 @@ function CreateSprintForm(props: IdModalProps) {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log(formData)
-
         const { errors, isValid } = validateSprintCreateForm(formData, tasks);
         setErrors(errors);
 
