@@ -26,18 +26,18 @@ function App() {
           path: "projects/",
           children: [
             { path: "", element: <Authenticated><ListProject /></Authenticated> },
-            { path: ":project_id", element: <Authenticated><ProjectView /></Authenticated> },
+            { 
+              path: ":project_id", 
+              children: [
+                { path: "", element: <Authenticated><ProjectView /></Authenticated> },
+                { path: "sprint/:sprint_id", element: <Authenticated><ViewSprint /></Authenticated> },
+              ]
+            },
           ],
         },
         {
           path: "project-magement/",
           element: <Authenticated><ListManageProjects /></Authenticated>,
-        },
-        {
-          path: "sprint/",
-          children: [
-            { path: ":sprint_id", element: <Authenticated><ViewSprint /></Authenticated> },
-          ],
         },
         { path: "*", element: <div>Not Found</div> },
       ],

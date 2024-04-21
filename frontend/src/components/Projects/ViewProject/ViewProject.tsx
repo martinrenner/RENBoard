@@ -66,26 +66,6 @@ function ViewProject() {
     }
   }
 
-  const handleEditProjectFormClose = () => {
-    setShowEditProjectForm(false);
-  }
-
-  const handleManageMembersClose = () => {
-    setShowManageMembers(false);
-  }
-
-  const handleCreateTaskClose = () => {
-    setShowCreateTaskForm(false);
-  }
-
-  const handleEditTaskClose = () => {
-    setShowEditTaskForm(false);
-  }
-
-  const handleCreateSprintClose = () => {
-    setShowCreateSprintForm(false);
-  }
-
   return (
   <>
     {project && (
@@ -118,7 +98,7 @@ function ViewProject() {
             )
           }
         </Row>
-        <Row>
+        <Row className="mb-5">
           <Col xs={12}>
             <Badge pill bg="primary">{project.tag.name}</Badge>
           </Col>
@@ -127,7 +107,7 @@ function ViewProject() {
             <p>{project.description}</p>
           </Col>
         </Row>
-        <Row className="mb-4">
+        <Row className="mb-3">
         <Col xs={10}>
           <h2>Sprints</h2>
         </Col>
@@ -137,10 +117,10 @@ function ViewProject() {
           </Button>
         </Col>
       </Row>
-        <Row>
+      <Row className="mb-5">
             {
               project.sprints.map((sprint) => (
-                <Col key={sprint.id} md={4} xl={3} className="mb-4 d-flex">
+                <Col key={sprint.id} md={4} xl={3} className="mb-1 d-flex">
                   <Card className="flex-grow-1 d-flex flex-column">
                     <Card.Body className="d-flex flex-column">
                       <Card.Title>
@@ -158,7 +138,7 @@ function ViewProject() {
                       <Card.Text className="mt-3 mb-3 flex-grow-1">
                         {sprint.description.substring(0, 200)}{sprint.description.length > 200 && "..."}
                       </Card.Text>
-                      <Link to={`/sprint/${sprint.id}`} className="mt-auto">
+                      <Link to={`sprint/${sprint.id}`} className="mt-auto">
                         <Button variant="primary">Open</Button>
                       </Link>
                     </Card.Body>
@@ -167,7 +147,7 @@ function ViewProject() {
               ))
             }
         </Row>
-        <Row className="mb-4">
+        <Row className="mb-3">
         <Col xs={10}>
           <h2>Tasks</h2>
         </Col>
@@ -177,7 +157,7 @@ function ViewProject() {
           </Button>
         </Col>
       </Row>
-        <Row>
+        <Row className="mb-5">
             {
               project.tasks.map((task) => (
                 <Col key={task.id} md={4} xl={3} className="mb-4 d-flex">
@@ -203,20 +183,20 @@ function ViewProject() {
               ))
             }
         </Row>
-        <EditProjectForm show={showEditProjectForm} onHide={handleEditProjectFormClose} id={project.id} data={null} setData={setProject}/>
+        <EditProjectForm show={showEditProjectForm} onHide={() => {setShowEditProjectForm(false)}} id={project.id} data={null} setData={setProject}/>
         {
           project.owner_id === id && (
-            <ManageMember show={showManageMembers} onHide={handleManageMembersClose} id={project.id} data={null} setData={() => {}}/>
+            <ManageMember show={showManageMembers} onHide={() => {setShowManageMembers(false)}} id={project.id} data={null} setData={() => {}}/>
           )
         }
         {
           showCreateTaskForm && (
-            <CreateTaskForm show={showCreateTaskForm} onHide={handleCreateTaskClose} id={project.id} data={project} setData={setProject}/>
+            <CreateTaskForm show={showCreateTaskForm} onHide={() => {setShowCreateTaskForm(false)}} id={project.id} data={project} setData={setProject}/>
           )
         }
         {
           showEditTaskForm && (
-            <EditTaskForm show={showEditTaskForm} onHide={handleEditTaskClose} id={selectedTaskId} data={project} setData={setProject}/>
+            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} data={project} setData={setProject}/>
           )
         }
         {
@@ -226,7 +206,7 @@ function ViewProject() {
         }
         {
           showCreateSprintForm && (
-            <CreateSprintForm show={showCreateSprintForm} onHide={handleCreateSprintClose} id={project.id} data={null} setData={() => {}}/>
+            <CreateSprintForm show={showCreateSprintForm} onHide={() => setShowCreateSprintForm(false)} id={project.id} data={null} setData={() => {}}/>
           )
         }
       </>
