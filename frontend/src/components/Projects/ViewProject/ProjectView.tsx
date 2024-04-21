@@ -10,7 +10,7 @@ function ViewProject() {
   const navigate = useNavigate();
   const { project_id } = useParams();
   const [showEditProjectForm, setShowEditProjectForm] = useState<boolean>(false);
-  const { token, isTokenValid } = useContext(TokenContext);
+  const { id, token, isTokenValid } = useContext(TokenContext);
   const [project, setProject] = useState<Project>();
 
   useEffect(() => {
@@ -65,17 +65,21 @@ function ViewProject() {
           <Col md={8}>
             <h1>{project.name}</h1>
           </Col>
-          <Col md={4} className="d-flex justify-content-end align-items-center">
-            <Button variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
-              Members  
-            </Button>
-            <Button onClick={handleEditProjectFormOpen} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
-              Edit
-            </Button>
-            <Button onClick={() => delete_project(project.id)} variant="primary" size="sm" className="rounded-pill" style={{height: '40px', width: '80px'}}>
-              Delete
-            </Button>
-          </Col>
+          {
+            id === project.owner_id && (
+              <Col md={4} className="d-flex justify-content-end align-items-center">
+                <Button variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+                  Members  
+                </Button>
+                <Button onClick={handleEditProjectFormOpen} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+                  Edit
+                </Button>
+                <Button onClick={() => delete_project(project.id)} variant="primary" size="sm" className="rounded-pill" style={{height: '40px', width: '80px'}}>
+                  Delete
+                </Button>
+              </Col>
+            )
+          }
         </Row>
         <Row>
           <Col>

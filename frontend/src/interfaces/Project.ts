@@ -7,6 +7,7 @@ export interface Project {
    customer: string | null;
    tag: Tag;
    created_at: string;
+   owner_id: number;
 }
 
 export interface ProjectCreate {
