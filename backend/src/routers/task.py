@@ -71,9 +71,6 @@ def assign_task_to_status(task_id: int, status_id: int, user: user_dependency, s
 
     - **task_id (int)**: The ID of the task.
     - **sprint_id (int)**: The ID of the sprint to assign the task to.
-
-    Returns:
-    - `TaskRead`: The updated task.
     """
     task_service.assign_task_to_sprint_db(task_id, status_id, user.id, session)
     

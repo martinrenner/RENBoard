@@ -54,8 +54,8 @@ function ListProject() {
       </Row>
       <Row>
         {projects.map((project) => (
-          <Col md={4} xl={3} className="mb-4 d-flex">
-            <Card key={project.id} className="flex-grow-1 d-flex flex-column">
+          <Col key={project.id} md={4} xl={3} className="mb-4 d-flex">
+            <Card className="flex-grow-1 d-flex flex-column">
               <Card.Body className="d-flex flex-column">
                 <Card.Title>
                   <h3>{project.name}</h3>
