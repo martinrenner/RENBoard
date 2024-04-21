@@ -17,9 +17,9 @@ def _db_initialized():
 
 def _add_priority():
     priorities = [
-        Priority(name="Low", points=1, color="#00FF00"),
-        Priority(name="Medium", points=3, color="#FFFF00"),
-        Priority(name="High", points=5, color="#FF0000"),
+        Priority(name="Low", points=1, color="success"),
+        Priority(name="Medium", points=3, color="warning"),
+        Priority(name="High", points=5, color="danger"),
     ]
     with Session(engine) as session:
         session.add_all(priorities)

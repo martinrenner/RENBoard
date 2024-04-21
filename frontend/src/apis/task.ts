@@ -73,7 +73,7 @@ export const GetTask = async (token: string | null | undefined, task_id: string 
 }
 
 export const DeleteTask = async (token: string | null | undefined, task_id: string | number): Promise<void> => {
-    const response = await fetch(`http://localhost:8000/project/${task_id}/delete`, {
+    const response = await fetch(`http://localhost:8000/task/${task_id}/delete`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

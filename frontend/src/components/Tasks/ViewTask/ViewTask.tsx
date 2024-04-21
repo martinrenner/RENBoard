@@ -35,7 +35,7 @@ function ViewTask(props: IdModalProps) {
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
             <h1>Task</h1>
-            <Badge pill>{task.priority?.name}</Badge>
+            <Badge pill bg={task.priority?.color}>{task.priority?.name}</Badge>
             <Col className="mt-3">
                 <p><strong>Name:</strong> {task?.name}</p>
                 <p><strong>Description:</strong> {task?.description}</p>
