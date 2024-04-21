@@ -11,6 +11,7 @@ import EditTaskForm from "../../Tasks/EditTask/EditTask";
 import ViewTask from "../../Tasks/ViewTask/ViewTask";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { DeleteTask } from "../../../apis/task";
+import CreateSprintForm from "../../Sprints/CreateSprint/CreateSprint";
 
 function ViewProject() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function ViewProject() {
   const [showCreateTaskForm, setShowCreateTaskForm] = useState<boolean>(false);
   const [showEditTaskForm, setShowEditTaskForm] = useState<boolean>(false);
   const [showViewTask, setShowViewTask] = useState<boolean>(false);
-  const [showSprintCreateForm, setShowSprintCreateForm] = useState<boolean>(false);
+  const [showCreateSprintForm, setShowCreateSprintForm] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number>({} as number);
   const { id, token, isTokenValid } = useContext(TokenContext);
   const [project, setProject] = useState<Project>();
@@ -81,6 +82,10 @@ function ViewProject() {
     setShowEditTaskForm(false);
   }
 
+  const handleCreateSprintClose = () => {
+    setShowCreateSprintForm(false);
+  }
+
   return (
   <>
     {project && (
@@ -127,7 +132,7 @@ function ViewProject() {
           <h2>Sprints</h2>
         </Col>
         <Col xs={2}>
-          <Button variant="primary" size="lg" className="float-end rounded-circle">
+          <Button onClick={() => setShowCreateSprintForm(true)} variant="primary" size="lg" className="float-end rounded-circle">
             +
           </Button>
         </Col>
@@ -217,6 +222,11 @@ function ViewProject() {
         {
           showViewTask && (
             <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} data={null} setData={() => {}}/>
+          )
+        }
+        {
+          showCreateSprintForm && (
+            <CreateSprintForm show={showCreateSprintForm} onHide={handleCreateSprintClose} id={project.id} data={null} setData={() => {}}/>
           )
         }
       </>

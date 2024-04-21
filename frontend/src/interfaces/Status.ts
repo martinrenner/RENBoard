@@ -5,3 +5,7 @@ export interface Status {
     name: string;
     task: Task[];
 }
+
+export interface StatusCreate {
+    name: string;
+}

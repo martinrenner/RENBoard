@@ -12,8 +12,8 @@ class SprintBase(BaseModel):
 class SprintCreate(SprintBase):
     name: str = Field(..., examples=["Sprint name"], min_length=3, max_length=100)
     description: str = Field(..., examples=["Sprint description"], min_length=3, max_length=1000)
-    date_started: date = Field(..., examples=["2021-05-01"])
-    date_finished: date = Field(..., examples=["2021-06-01"])
+    date_started: date = Field(..., examples=["2024-04-21"])
+    date_finished: date = Field(..., examples=["2024-04-23"])
     task_ids: list[int] = Field(..., examples=[[1, 2]], min_items=0)
     statuses: list[StatusCreate] = Field(..., min_items=2)
     
@@ -21,8 +21,8 @@ class SprintCreate(SprintBase):
 class SprintUpdate(SprintBase):
     name: Optional[str] = Field(None, examples=["Sprint name"], min_length=3, max_length=100)
     description: Optional[str] = Field(None, examples=["Sprint description"], min_length=3, max_length=1000)
-    date_started: Optional[date] = Field(None, examples=["3.5.2021"])
-    date_finished: Optional[date] = Field(None, examples=["3.6.2021"])
+    date_started: Optional[date] = Field(None, examples=["2024-04-21"])
+    date_finished: Optional[date] = Field(None, examples=["2024-04-23"])
 
 
 class SprintAssignTaskCreate(SprintBase):
