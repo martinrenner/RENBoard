@@ -1,4 +1,5 @@
-import { Sprint, SprintCreate, SprintUpdate } from "../interfaces/Sprint";
+import { Sprint, SprintCreate, SprintUpdate, TaskSprintCreate } from "../interfaces/Sprint";
+import { Task } from "../interfaces/Task";
 
 export const CreateSprint = async (token: string | null | undefined, project_id: string | number, formData: SprintCreate): Promise<Sprint> => {
     const response = await fetch(`http://localhost:8000/sprint/?project_id=${project_id}`, {
@@ -68,4 +69,20 @@ export const DeleteSprint = async (token: string | null | undefined, sprint_id: 
     if (!response.ok) {
       throw new Error("Failed to delete sprint");
     }
+}
+
+export const AddTaskToSprint = async (token: string | null | undefined, sprint_id: string | number, formData: TaskSprintCreate): Promise<Task> => {
+    const response = await fetch(`http://localhost:8000/sprint/${sprint_id}/assign-task?task_id=${formData.task_id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to add task to sprint");
+    }
+
+    return await response.json();
 }

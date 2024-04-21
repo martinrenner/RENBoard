@@ -7,7 +7,11 @@ import { Project } from "../../../interfaces/Project";
 import { GetProject } from "../../../apis/project";
 import ViewTask from "../../Tasks/ViewTask/ViewTask";
 import { Badge, Breadcrumb, Button, Card, Col, Row } from "react-bootstrap";
-import { Calendar } from "react-bootstrap-icons";
+import { Calendar, PencilSquare, Trash } from "react-bootstrap-icons";
+import { DeleteTask } from "../../../apis/task";
+import EditTaskForm from "../../Tasks/EditTask/EditTask";
+import EditSprintForm from "../EditSprint/EditSprint";
+import AddTaskSprint from "../AddTaskSprint/AddTaskSprint";
 
 function ViewSprint() {
   const navigate = useNavigate();
@@ -15,6 +19,8 @@ function ViewSprint() {
   const { token, isTokenValid } = useContext(TokenContext);
   const [ project, setProject ] = useState<Project>();
   const [ sprint, setSprint ] = useState<Sprint>();
+  const [showAddTaskForm, setShowAddTaskForm] = useState<boolean>(false);
+  const [showEditTaskForm, setShowEditTaskForm] = useState<boolean>(false);
   const [showEditSprintForm, setShowEditSprintForm] = useState<boolean>(false);
   const [showViewTask, setShowViewTask] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number>({} as number);
@@ -56,6 +62,14 @@ function ViewSprint() {
       console.error("Error deleting sprint:", error);
     }
   };
+
+  const delete_task = async (task_id: number) => {
+    try {
+      await DeleteTask(token, task_id);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  }
 
   return (
     <>
@@ -100,7 +114,7 @@ function ViewSprint() {
             <h2>Board</h2>
           </Col>
           <Col xs={2} className="d-flex justify-content-end">
-            <Button variant="primary" size="lg" className="float-end rounded-circle">
+            <Button onClick={() => setShowAddTaskForm(true)} variant="primary" size="lg" className="float-end rounded-circle">
               +
             </Button>
           </Col>
@@ -113,7 +127,7 @@ function ViewSprint() {
                 <h3 className="text-center">{status.name}</h3>
                 {
                   status.task.map((task) => (
-                    <Card key={task.id} className="flex-grow-1 d-flex flex-column" onClick={() => {setSelectedTaskId(task.id); setShowViewTask(true)}}>
+                    <Card key={task.id} className="flex-grow-1 d-flex flex-column">
                       <Card.Body className="d-flex flex-column">
                         <Card.Title>
                           <h3>{task.name}</h3>
@@ -121,6 +135,11 @@ function ViewSprint() {
                         <Card.Subtitle className="mb-2 text-muted">
                           <Badge pill bg={task.priority.color}>{task.priority.name}</Badge>
                         </Card.Subtitle>
+                        <Card.Text>
+                          <Button variant="primary" onClick={() => {setShowViewTask(true); setSelectedTaskId(task.id);}}>Open</Button>{' '}
+                          <Button variant="primary" onClick={() => {setShowEditTaskForm(true); setSelectedTaskId(task.id);}}><PencilSquare/></Button>{' '}
+                          <Button variant="primary" onClick={() => delete_task(task.id)}><Trash/></Button>
+                        </Card.Text>
                       </Card.Body>
                     </Card>
                   ))
@@ -149,6 +168,21 @@ function ViewSprint() {
             </Col>
           </Col>
         </Row>
+        {
+          showAddTaskForm && (
+            <AddTaskSprint show={showAddTaskForm} onHide={() => {setShowAddTaskForm(false)}} id={sprint.id} data={null} setData={() => {}}/>
+          )
+        }
+        {
+          showEditSprintForm && (
+            <EditSprintForm show={showEditSprintForm} onHide={() => {setShowEditSprintForm(false)}} id={sprint.id} data={project} setData={setProject}/>
+          )
+        }
+        {
+          showEditTaskForm && (
+            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} data={project} setData={setProject}/>
+          )
+        }
         {
           showViewTask && (
             <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} data={null} setData={() => {}}/>

@@ -1,4 +1,4 @@
-import { SprintCreate, SprintUpdate } from "../interfaces/Sprint";
+import { SprintCreate, SprintUpdate, TaskSprintCreate } from "../interfaces/Sprint";
 import { Task } from "../interfaces/Task";
 
 export function validateSprintCreateForm(formData: SprintCreate, tasks: Task[]): { errors: { [key: string]: string }, isValid: boolean } {
@@ -88,6 +88,21 @@ export function validateSprintUpdateForm(formData: SprintUpdate): { errors: { [k
         errors.date_finished = "Invalid finish date";
     } else if (Date.parse(formData.date_finished) < Date.parse(formData.date_started)) {
         errors.date_finished = "Finish date must be after start date";
+    }
+
+    return { errors, isValid: Object.keys(errors).length === 0 };
+}
+
+export function validateTaskSprintCreateForm(formData: TaskSprintCreate): { errors: { [key: string]: string }, isValid: boolean } {
+    const errors: { [key: string]: string } = {};
+
+    // Validate id_task
+    if (!formData.task_id) {
+        errors.task_id = "Task is required";
+    } else if (isNaN(Number(formData.task_id))) {
+        errors.task_id = "Invalid task id";
+    } else if (Number(formData.task_id) < 1) {
+        errors.task_id = "Invalid task id";
     }
 
     return { errors, isValid: Object.keys(errors).length === 0 };

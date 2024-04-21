@@ -24,3 +24,7 @@ export interface SprintUpdate {
     date_started: string;
     date_finished: string;
 }
+
+export interface TaskSprintCreate {
+    task_id: number;
+}
