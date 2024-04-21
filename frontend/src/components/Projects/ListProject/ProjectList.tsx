@@ -6,7 +6,7 @@ import TokenContext from "../../../context/TokenContext";
 import { GetProjects } from "../../../apis/project";
 import CreateProjectForm from "../CreateProject/CreateProject";
 
-function ProjectList() {
+function ListProject() {
   const [showCreateProjectForm, setShowCreateProjectForm] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { token, isTokenValid } = useContext(TokenContext);
@@ -25,7 +25,7 @@ function ProjectList() {
   
       fetchData();
     }
-  }, [token, isTokenValid]);
+  }, []);
 
   const handleCreateProjectFormOpen = () => {
     setShowCreateProjectForm(true);
@@ -79,4 +79,4 @@ function ProjectList() {
   );
 }
 
-export default ProjectList;
+export default ListProject;

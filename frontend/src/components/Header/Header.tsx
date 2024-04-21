@@ -42,7 +42,8 @@ function Header() {
               </>
             ) : (
               <NavDropdown title={username}>
-                <NavDropdown.Item as={NavLink} to="/groups">Groups</NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/projects">Projects</NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/project-magement">Project Management</NavDropdown.Item>
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
             )}

@@ -6,7 +6,7 @@ import TokenContext from "../../../context/TokenContext";
 import { DeleteProject, GetProject } from "../../../apis/project";
 import EditProjectForm from "../EditProject/EditProject";
 
-function ProjectView() {
+function ViewProject() {
   const navigate = useNavigate();
   const { project_id } = useParams();
   const [showEditProjectForm, setShowEditProjectForm] = useState<boolean>(false);
@@ -90,4 +90,4 @@ function ProjectView() {
 );
 }
 
-export default ProjectView;
+export default ViewProject;

@@ -127,7 +127,7 @@ class ProjectService:
         commit_and_handle_exception(session)
 
     def select_all_projects_member_db(self, user_id: int, session: Session):
-        statement = select(Member).join(Project, Project.id == Member.project_id).where(and_(Member.user_id == user_id))
+        statement = select(Member).join(Project, Project.id == Member.project_id).where(and_(Member.user_id == user_id)).order_by(Project.id)
         members = session.exec(statement).all()
         return members
 
