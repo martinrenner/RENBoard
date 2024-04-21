@@ -11,7 +11,8 @@ class MemberRead(MemberBase):
     surname: str
     username: str
     email: str
-    accepted: bool
+    is_owner: bool
+    is_accepted: bool
 
 
     @classmethod
@@ -22,5 +23,6 @@ class MemberRead(MemberBase):
             surname=member.user.surname,
             username=member.user.username,
             email=member.user.email,
-            accepted=member.accepted
+            is_owner=True if member.project.user_id == member.user_id else False,
+            is_accepted=member.accepted
         )

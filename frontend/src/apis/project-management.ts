@@ -45,7 +45,7 @@ export const LeaveProject = async (token: string | null | undefined, projectId: 
     }
 }
 
-export const ProjectMembers = async (token: string | null | undefined, projectId: number): Promise<Member[]> => {
+export const GetProjectMembers = async (token: string | null | undefined, projectId: number): Promise<Member[]> => {
     const response = await fetch(`http://localhost:8000/project-management/${projectId}/members`, {
       method: "GET",
       headers: {
@@ -62,17 +62,12 @@ export const ProjectMembers = async (token: string | null | undefined, projectId
 }
 
 export const InviteMember = async (token: string | null | undefined, projectId: number, username: string): Promise<Member> => {
-    const response = await fetch(`http://localhost:8000/project-management/${projectId}/add-member`, {
+    const response = await fetch(`http://localhost:8000/project-management/${projectId}/add-member?member=${username}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(
-        {
-          member: username
-        }
-      )
+      }
     })
 
     if (!response.ok) {
@@ -83,17 +78,12 @@ export const InviteMember = async (token: string | null | undefined, projectId: 
 }
 
 export const RemoveMember = async (token: string | null | undefined, projectId: number, username: string): Promise<void> => {
-    const response = await fetch(`http://localhost:8000/project-management/${projectId}/remove-member`, {
+    const response = await fetch(`http://localhost:8000/project-management/${projectId}/remove-member?member=${username}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(
-        {
-          member: username
-        }
-      )
+      }
     })
 
     if (!response.ok) {

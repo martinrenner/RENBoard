@@ -8,3 +8,9 @@ interface EditModalProps {
     onHide: () => void;
     setData: (data: any) => void;
 }
+
+interface IdModalProps {
+    show: boolean;
+    onHide: () => void;
+    id: number;
+}

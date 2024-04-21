@@ -5,11 +5,13 @@ import { Breadcrumb, Button, Col, Row } from "react-bootstrap";
 import TokenContext from "../../../context/TokenContext";
 import { DeleteProject, GetProject } from "../../../apis/project";
 import EditProjectForm from "../EditProject/EditProject";
+import ManageMember from "../../Members/ManageMember";
 
 function ViewProject() {
   const navigate = useNavigate();
   const { project_id } = useParams();
   const [showEditProjectForm, setShowEditProjectForm] = useState<boolean>(false);
+  const [showManageMembers, setShowManageMembers] = useState<boolean>(false);
   const { id, token, isTokenValid } = useContext(TokenContext);
   const [project, setProject] = useState<Project>();
 
@@ -49,6 +51,14 @@ function ViewProject() {
     setShowEditProjectForm(false);
   }
 
+  const handleManageMembersOpen = () => {
+    setShowManageMembers(true);
+  }
+
+  const handleManageMembersClose = () => {
+    setShowManageMembers(false);
+  }
+
   return (
   <>
     {project && (
@@ -68,7 +78,7 @@ function ViewProject() {
           {
             id === project.owner_id && (
               <Col md={4} className="d-flex justify-content-end align-items-center">
-                <Button variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+                <Button onClick={handleManageMembersOpen} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
                   Members  
                 </Button>
                 <Button onClick={handleEditProjectFormOpen} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
@@ -88,6 +98,7 @@ function ViewProject() {
           </Col>
         </Row>
         <EditProjectForm show={showEditProjectForm} onHide={handleEditProjectFormClose} setData={setProject}/>
+        <ManageMember show={showManageMembers} onHide={handleManageMembersClose} id={project.id}/>
       </>
     )}
   </>

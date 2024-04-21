@@ -87,6 +87,9 @@ class ProjectService:
         if member is None:
             raise HTTPException(status_code=404, detail="User is not member of this project")
         
+        if project.user_id == member.user_id:
+            raise HTTPException(status_code=404, detail="Owner cannot be removed from the project")
+        
         session.delete(member)
         commit_and_handle_exception(session)
 
