@@ -15,7 +15,6 @@ function EditTaskForm(props: IdModalProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [ priorities, setPriorities ] = useState<Priority[]>([]);
-  
   const [formData, setFormData] = useState<TaskUpdate>({
     name: "",
     description: "",

@@ -8,15 +8,13 @@ import { validateAddMemberForm } from "../../validation/Member";
 function ManageMember(props: IdModalProps) {
     const [ members, setMembers ] = useState<Member[]>([]);
     const { token } = useContext(TokenContext);
-    const [formData, setFormData] = useState<AddMember>({} as AddMember);
+    const [formData, setFormData] = useState<AddMember>({
+        username: "",
+    });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     useEffect(() => {
-        setFormData({
-            username: "",
-        });
-
         const fetchData = async () => {
             try {
                 const response = await GetProjectMembers(token, props.id);

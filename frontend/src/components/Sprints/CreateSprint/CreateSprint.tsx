@@ -13,7 +13,14 @@ import { Trash } from "react-bootstrap-icons";
 function CreateSprintForm(props: IdModalProps) {
     const project_id = props.id;
     const [inputStatus, setInputStatus] = useState("");
-    const [formData, setFormData] = useState<SprintCreate>({} as SprintCreate);
+    const [formData, setFormData] = useState<SprintCreate>({
+        name: "",
+        description: "",
+        date_started: "",
+        date_finished: "",
+        task_ids: [],
+        statuses: [],
+    });
     const navigate = useNavigate();
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -21,25 +28,17 @@ function CreateSprintForm(props: IdModalProps) {
     const [ tasks, setTasks ] = useState<Task[]>([]);
 
     useEffect(() => {
-        setFormData({
-            name: "",
-            description: "",
-            date_started: "",
-            date_finished: "",
-            task_ids: [],
-            statuses: [],
-        });
         if (isTokenValid()) {
-        const fetchData = async () => {
-            try {
-                const result = await GetTasks(token, project_id);
-            setTasks(result);
-            } catch (error) {
-                console.error("Error fetching tasks data:", error);
-            }
-        };
-    
-        fetchData();
+            const fetchData = async () => {
+                try {
+                    const result = await GetTasks(token, project_id);
+                setTasks(result);
+                } catch (error) {
+                    console.error("Error fetching tasks data:", error);
+                }
+            };
+        
+            fetchData();
         }
     }, [props.show]);
 

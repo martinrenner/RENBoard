@@ -9,18 +9,19 @@ import { CreateTask } from "../../../apis/task";
 
 
 function CreateTaskForm(props: IdModalProps) {
-  const [formData, setFormData] = useState<TaskCreate>({} as TaskCreate);
+  const [formData, setFormData] = useState<TaskCreate>(
+    {
+      name: "",
+      description: "",
+      priority_id: 1,
+    }
+  );
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { token, isTokenValid } = useContext(TokenContext);
   const [ priorities, setPriorities ] = useState<Priority[]>([]);
 
   useEffect(() => {
-    setFormData({
-        name: "",
-        description: "",
-        priority_id: 1,
-      });
     if (isTokenValid()) {
       const fetchData = async () => {
         try {

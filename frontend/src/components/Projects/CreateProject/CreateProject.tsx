@@ -9,21 +9,19 @@ import { Tag } from "../../../interfaces/Tag";
 import { GetTags } from "../../../apis/tags";
 
 function CreateProjectForm(props: ModalProps) {
-  const [formData, setFormData] = useState<ProjectCreate>({} as ProjectCreate);
-
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { token, isTokenValid } = useContext(TokenContext);
   const [ tags, setTags ] = useState<Tag[]>([]);
+  const [formData, setFormData] = useState<ProjectCreate>({
+    name: "",
+    description: "",
+    customer: null,
+    tag_id: 1,
+  });
 
   useEffect(() => {
-    setFormData({
-        name: "",
-        description: "",
-        customer: null,
-        tag_id: 1,
-      });
     if (isTokenValid()) {
       const fetchData = async () => {
         try {

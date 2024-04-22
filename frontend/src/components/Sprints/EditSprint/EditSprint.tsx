@@ -8,34 +8,33 @@ import { GetSprint, UpdateSprint } from "../../../apis/sprint";
 
 function EditSprintForm(props: IdModalProps) {
     const sprint_id = props.id;
-    const [formData, setFormData] = useState<SprintUpdate>({} as SprintUpdate);
+    const [formData, setFormData] = useState<SprintUpdate>({
+        name: "",
+        description: "",
+        date_started: "",
+        date_finished: "",
+    });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [errorMessage, setErrorMessage] = useState<string>("");
     const { token, isTokenValid } = useContext(TokenContext);
 
     useEffect(() => {
-        setFormData({
-            name: "",
-            description: "",
-            date_started: "",
-            date_finished: "",
-        });
         if (isTokenValid()) {
-        const fetchData = async () => {
-            try {
-                const result = await GetSprint(token, sprint_id);
-                setFormData({
-                    name: result.name,
-                    description: result.description,
-                    date_started: result.date_started,
-                    date_finished: result.date_finished,
-                });
-            } catch (error) {
-                console.error("Error fetching tasks data:", error);
-            }
-        };
+            const fetchData = async () => {
+                try {
+                    const result = await GetSprint(token, sprint_id);
+                    setFormData({
+                        name: result.name,
+                        description: result.description,
+                        date_started: result.date_started,
+                        date_finished: result.date_finished,
+                    });
+                } catch (error) {
+                    console.error("Error fetching tasks data:", error);
+                }
+            };
     
-        fetchData();
+            fetchData();
         }
     }, [sprint_id, props.show]);
 

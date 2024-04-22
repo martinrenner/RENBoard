@@ -27,14 +27,6 @@ function ListProject() {
     }
   }, []);
 
-  const handleCreateProjectFormOpen = () => {
-    setShowCreateProjectForm(true);
-  }
-
-  const handleCreateProjectFormClose = () => {
-    setShowCreateProjectForm(false);
-  }
-
   return (
     <>
       <Row>
@@ -47,7 +39,7 @@ function ListProject() {
           <h1>Projects</h1>
         </Col>
         <Col xs={2}>
-          <Button variant="primary" size="lg" className="float-end rounded-circle" onClick={handleCreateProjectFormOpen}>
+          <Button variant="primary" size="lg" className="float-end rounded-circle" onClick={() => setShowCreateProjectForm(true)}>
             +
           </Button>
         </Col>
@@ -74,7 +66,9 @@ function ListProject() {
           </Col>
         ))}
       </Row>
-      <CreateProjectForm show={showCreateProjectForm} onHide={handleCreateProjectFormClose}/>
+      {
+        showCreateProjectForm && <CreateProjectForm show={showCreateProjectForm} onHide={() => setShowCreateProjectForm(false)}/>
+      }
     </>
   );
 }
