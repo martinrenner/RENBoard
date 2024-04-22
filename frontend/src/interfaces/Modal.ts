@@ -1,12 +1,6 @@
 interface ModalProps {
+    id: number | string | undefined | null;
     show: boolean;
     onHide: () => void;
-}
-
-interface IdModalProps {
-    show: boolean;
-    onHide: () => void;
-    data: any;
-    setData: (data: any) => void;
-    id: number;
+    updateData: (updatedInstance: any) => void;
 }

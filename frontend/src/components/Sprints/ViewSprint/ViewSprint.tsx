@@ -12,13 +12,14 @@ import { DeleteTask } from "../../../apis/task";
 import EditTaskForm from "../../Tasks/EditTask/EditTask";
 import EditSprintForm from "../EditSprint/EditSprint";
 import AddTaskSprint from "../AddTaskSprint/AddTaskSprint";
+import { Task } from "../../../interfaces/Task";
 
 function ViewSprint() {
   const navigate = useNavigate();
   const { project_id, sprint_id } = useParams();
   const { token, isTokenValid } = useContext(TokenContext);
   const [ project, setProject ] = useState<Project>();
-  const [ sprint, setSprint ] = useState<Sprint>();
+  const [ sprint, setSprint ] = useState<Sprint>({} as Sprint);
   const [showAddTaskForm, setShowAddTaskForm] = useState<boolean>(false);
   const [showEditTaskForm, setShowEditTaskForm] = useState<boolean>(false);
   const [showEditSprintForm, setShowEditSprintForm] = useState<boolean>(false);
@@ -66,9 +67,55 @@ function ViewSprint() {
   const delete_task = async (task_id: number) => {
     try {
       await DeleteTask(token, task_id);
+      setSprint(
+        {
+          ...sprint,
+          statuses: sprint?.statuses.map((status) => 
+            {
+              return {
+                ...status,
+                task: status.task.filter((task) => task.id !== task_id)
+              }
+            }
+          )
+        }
+      )
     } catch (error) {
       console.error("Error deleting task:", error);
     }
+  }
+
+  const updateShowSprint = (newInstance: any) => {
+    setSprint(newInstance);
+  }
+
+  const createShowSprintTasks = (newInstance: Task) => {
+    setSprint(
+      {
+        ...sprint,
+        statuses: sprint?.statuses.map((status, index) => 
+          index === 0 ? {...status, task: [...status.task, newInstance]} : status
+        )
+      }
+    );
+  }
+
+  const updateShownSprintTasks = (updatedInstance: Task) => {
+    setSprint(
+      {
+        ...sprint,
+        statuses: sprint?.statuses.map((status) => 
+          {
+            return {
+              ...status,
+              task: status.task.map((task) => 
+                task.id === updatedInstance.id ? updatedInstance : task
+              )
+            }
+          }
+        )
+      }
+    )
   }
 
   return (
@@ -170,22 +217,22 @@ function ViewSprint() {
         </Row>
         {
           showAddTaskForm && (
-            <AddTaskSprint show={showAddTaskForm} onHide={() => {setShowAddTaskForm(false)}} id={sprint.id} data={null} setData={() => {}}/>
+            <AddTaskSprint show={showAddTaskForm} onHide={() => {setShowAddTaskForm(false)}} id={sprint.id} updateData={createShowSprintTasks}/>
           )
         }
         {
           showEditSprintForm && (
-            <EditSprintForm show={showEditSprintForm} onHide={() => {setShowEditSprintForm(false)}} id={sprint.id} data={project} setData={setProject}/>
+            <EditSprintForm show={showEditSprintForm} onHide={() => {setShowEditSprintForm(false)}} id={sprint.id} updateData={updateShowSprint}/>
           )
         }
         {
           showEditTaskForm && (
-            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} data={project} setData={setProject}/>
+            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} updateData={updateShownSprintTasks}/>
           )
         }
         {
           showViewTask && (
-            <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} data={null} setData={() => {}}/>
+            <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} updateData={() => {}}/>
           )
         }
         </>

@@ -26,6 +26,10 @@ function ListProject() {
       fetchData();
     }
   }, []);
+  
+  const createShowProjects = (updatedInstance: any) => {
+    setProjects([...projects, updatedInstance]);
+  }
 
   return (
     <>
@@ -67,7 +71,7 @@ function ListProject() {
         ))}
       </Row>
       {
-        showCreateProjectForm && <CreateProjectForm show={showCreateProjectForm} onHide={() => setShowCreateProjectForm(false)}/>
+        showCreateProjectForm && <CreateProjectForm show={showCreateProjectForm} onHide={() => setShowCreateProjectForm(false)} id={null} updateData={createShowProjects}/>
       }
     </>
   );

@@ -10,7 +10,7 @@ import { GetTasks } from "../../../apis/task";
 import { Trash } from "react-bootstrap-icons";
 
 
-function CreateSprintForm(props: IdModalProps) {
+function CreateSprintForm(props: ModalProps) {
     const project_id = props.id;
     const [inputStatus, setInputStatus] = useState("");
     const [formData, setFormData] = useState<SprintCreate>({
@@ -31,8 +31,12 @@ function CreateSprintForm(props: IdModalProps) {
         if (isTokenValid()) {
             const fetchData = async () => {
                 try {
-                    const result = await GetTasks(token, project_id);
-                setTasks(result);
+                    if (project_id) {
+                        const result = await GetTasks(token, project_id);
+                        setTasks(result);
+                    }
+                    else
+                        throw new Error("Project ID not found");
                 } catch (error) {
                     console.error("Error fetching tasks data:", error);
                 }
@@ -48,10 +52,11 @@ function CreateSprintForm(props: IdModalProps) {
         const { errors, isValid } = validateSprintCreateForm(formData, tasks);
         setErrors(errors);
 
-        if (isValid) {
+        if (isValid && project_id) {
           try {
             const result = await CreateSprint(token, project_id, formData);
-            navigate(`/sprint/${result.id}`);
+            props.updateData(result);
+            // navigate(`/projects/${project_id}/sprint/${result.id}`);
             props.onHide();
           } catch (error) {
             setErrorMessage("Create sprint failed");

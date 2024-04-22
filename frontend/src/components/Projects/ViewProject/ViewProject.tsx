@@ -66,6 +66,33 @@ function ViewProject() {
     }
   }
 
+  const updateShowProject = (updatedInstance: any) => {
+    setProject(updatedInstance);
+  }
+
+  const createShowProjectTasks = (newInstance: any) => {
+    setProject((prevProject) => ({
+      ...prevProject!,
+      tasks: [...prevProject!.tasks, newInstance]
+    }));
+  }
+
+  const updateShowProjectTasks = (updatedInstance: any) => {
+    setProject((prevProject) => ({
+      ...prevProject!,
+      tasks: prevProject!.tasks.map(task => 
+        task.id === updatedInstance.id ? updatedInstance : task
+      )
+    }));
+  }
+
+  const createShowProjectSprints = (newInstance: any) => {
+    setProject((prevProject) => ({
+      ...prevProject!,
+      sprints: [...prevProject!.sprints, newInstance]
+    }));
+  }
+
   return (
   <>
     {project && (
@@ -128,10 +155,14 @@ function ViewProject() {
                       </Card.Title>
                       <Card.Subtitle className="mb-2 text-muted">
                         {
-                          new Date(sprint.date_finished) < new Date() ? (
+                          new Date() > new Date(sprint.date_finished) ? (
                             <Badge pill bg="success">Completed</Badge>
                           ) : (
-                            <Badge pill bg="info">In Progress</Badge>
+                            new Date() > new Date(sprint.date_started) ? (
+                              <Badge pill bg="info">In Progress</Badge>
+                            ) : (
+                              <Badge pill bg="warning">Upcoming</Badge>
+                            )
                           )
                         }
                       </Card.Subtitle>
@@ -183,30 +214,34 @@ function ViewProject() {
               ))
             }
         </Row>
-        <EditProjectForm show={showEditProjectForm} onHide={() => {setShowEditProjectForm(false)}} id={project.id} data={null} setData={setProject}/>
+        {
+          showEditProjectForm && (
+            <EditProjectForm show={showEditProjectForm} onHide={() => {setShowEditProjectForm(false)}} id={project.id} updateData={updateShowProject}/>
+          )
+        }        
         {
           project.owner_id === id && (
-            <ManageMember show={showManageMembers} onHide={() => {setShowManageMembers(false)}} id={project.id} data={null} setData={() => {}}/>
+            <ManageMember show={showManageMembers} onHide={() => {setShowManageMembers(false)}} id={project.id} updateData={() => {}}/>
           )
         }
         {
           showCreateTaskForm && (
-            <CreateTaskForm show={showCreateTaskForm} onHide={() => {setShowCreateTaskForm(false)}} id={project.id} data={project} setData={setProject}/>
+            <CreateTaskForm show={showCreateTaskForm} onHide={() => {setShowCreateTaskForm(false)}} id={project.id} updateData={createShowProjectTasks}/>
           )
         }
         {
           showEditTaskForm && (
-            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} data={project} setData={setProject}/>
+            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} updateData={updateShowProjectTasks}/>
           )
         }
         {
           showViewTask && (
-            <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} data={null} setData={() => {}}/>
+            <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} updateData={() => {}}/>
           )
         }
         {
           showCreateSprintForm && (
-            <CreateSprintForm show={showCreateSprintForm} onHide={() => setShowCreateSprintForm(false)} id={project.id} data={null} setData={() => {}}/>
+            <CreateSprintForm show={showCreateSprintForm} onHide={() => setShowCreateSprintForm(false)} id={project.id} updateData={createShowProjectSprints}/>
           )
         }
       </>

@@ -5,8 +5,8 @@ import { GetTask } from "../../../apis/task";
 import { Task } from "../../../interfaces/Task";
 
 
-function ViewTask(props: IdModalProps) {
-  const task_id: number  = props.id;
+function ViewTask(props: ModalProps) {
+  const task_id = props.id;
   const { token, isTokenValid } = useContext(TokenContext);
   const [task, setTask] = useState<Task>({} as Task);
 

@@ -9,8 +9,9 @@ import { AddTaskToSprint } from "../../../apis/sprint";
 import { useParams } from "react-router-dom";
 
 
-function AddTaskSprintForm(props: IdModalProps) {
+function AddTaskSprintForm(props: ModalProps) {
   const {project_id} = useParams();
+  const sprint_id = props.id;
   const [formData, setFormData] = useState<TaskSprintCreate>({} as TaskSprintCreate);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -46,9 +47,10 @@ function AddTaskSprintForm(props: IdModalProps) {
     const { errors, isValid } = validateTaskSprintCreateForm(formData);
     setErrors(errors);
 
-    if (isValid) {
+    if (isValid && sprint_id) {
       try {
-        await AddTaskToSprint(token, props.id, formData);
+        const response = await AddTaskToSprint(token, sprint_id, formData);
+        props.updateData(response);
         props.onHide();
       } catch (error) {
         setErrorMessage("Add task to sprint failed");

@@ -6,7 +6,7 @@ import { validateSprintUpdateForm } from "../../../validation/Sprint";
 import { GetSprint, UpdateSprint } from "../../../apis/sprint";
 
 
-function EditSprintForm(props: IdModalProps) {
+function EditSprintForm(props: ModalProps) {
     const sprint_id = props.id;
     const [formData, setFormData] = useState<SprintUpdate>({
         name: "",
@@ -22,13 +22,17 @@ function EditSprintForm(props: IdModalProps) {
         if (isTokenValid()) {
             const fetchData = async () => {
                 try {
-                    const result = await GetSprint(token, sprint_id);
-                    setFormData({
-                        name: result.name,
-                        description: result.description,
-                        date_started: result.date_started,
-                        date_finished: result.date_finished,
-                    });
+                    if (sprint_id) {
+                        const result = await GetSprint(token, sprint_id);
+                        setFormData({
+                            name: result.name,
+                            description: result.description,
+                            date_started: result.date_started,
+                            date_finished: result.date_finished,
+                        });
+                    }
+                    else
+                        throw new Error("Sprint ID not found");
                 } catch (error) {
                     console.error("Error fetching tasks data:", error);
                 }
@@ -44,9 +48,10 @@ function EditSprintForm(props: IdModalProps) {
         const { errors, isValid } = validateSprintUpdateForm(formData);
         setErrors(errors);
 
-        if (isValid) {
+        if (isValid && sprint_id) {
           try {
-            await UpdateSprint(token, sprint_id, formData);
+            const response = await UpdateSprint(token, sprint_id, formData);
+            props.updateData(response);
             props.onHide();
           } catch (error) {
             setErrorMessage("Update sprint failed");

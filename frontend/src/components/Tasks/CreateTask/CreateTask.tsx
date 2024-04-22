@@ -8,7 +8,8 @@ import { validateTaskCreateForm } from "../../../validation/Task";
 import { CreateTask } from "../../../apis/task";
 
 
-function CreateTaskForm(props: IdModalProps) {
+function CreateTaskForm(props: ModalProps) {
+  const project_id = props.id;
   const [formData, setFormData] = useState<TaskCreate>(
     {
       name: "",
@@ -42,10 +43,10 @@ function CreateTaskForm(props: IdModalProps) {
     const { errors, isValid } = validateTaskCreateForm(formData);
     setErrors(errors);
 
-    if (isValid) {
+    if (isValid && project_id) {
       try {
-        const result = await CreateTask(token, props.id, formData);
-        props.setData({...props.data, tasks: [...props.data.tasks, result]});
+        const result = await CreateTask(token, project_id, formData);
+        props.updateData(result);
         props.onHide();
       } catch (error) {
         setErrorMessage("Create task failed");

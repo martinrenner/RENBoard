@@ -5,7 +5,8 @@ import { GetProjectMembers, InviteMember, RemoveMember } from "../../apis/projec
 import TokenContext from "../../context/TokenContext";
 import { validateAddMemberForm } from "../../validation/Member";
 
-function ManageMember(props: IdModalProps) {
+function ManageMember(props: ModalProps) {
+    const project_id = props.id;
     const [ members, setMembers ] = useState<Member[]>([]);
     const { token } = useContext(TokenContext);
     const [formData, setFormData] = useState<AddMember>({
@@ -17,8 +18,12 @@ function ManageMember(props: IdModalProps) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await GetProjectMembers(token, props.id);
-                setMembers(response);
+                if (project_id) {
+                    const response = await GetProjectMembers(token, project_id);
+                    setMembers(response);
+                }
+                else 
+                    throw new Error("Project ID not found");
             } catch (error) {
                 console.error("Error fetching project data:", error);
             }
@@ -41,9 +46,9 @@ function ManageMember(props: IdModalProps) {
         const { errors, isValid } = validateAddMemberForm(formData);
         setErrors(errors);
     
-        if (isValid) {
+        if (isValid && project_id) {
           try {
-            const result = await InviteMember(token, props.id, formData.username);
+            const result = await InviteMember(token, project_id, formData.username);
             setMembers([...members, result]);
           } catch (error) {
             setErrorMessage("Add member failed");
@@ -54,8 +59,12 @@ function ManageMember(props: IdModalProps) {
 
     const removeMember = async (username: string) => {
         try {
-            await RemoveMember(token, props.id, username);
-            setMembers(members.filter((member) => member.username !== username));
+            if (project_id) {
+                await RemoveMember(token, project_id, username);
+                setMembers(members.filter((member) => member.username !== username));
+            }
+            else 
+                throw new Error("Project ID not found");
         } catch (error) {
             console.error("Error:", error);
         }

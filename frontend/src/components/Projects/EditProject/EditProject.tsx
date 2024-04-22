@@ -8,8 +8,8 @@ import { Tag } from "../../../interfaces/Tag";
 import { GetTags } from "../../../apis/tags";
 
 
-function EditProjectForm(props: IdModalProps) {
-  const project_id: number  = props.id;
+function EditProjectForm(props: ModalProps) {
+  const project_id = props.id;
   const { token, isTokenValid } = useContext(TokenContext);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -63,7 +63,7 @@ function EditProjectForm(props: IdModalProps) {
       try {
         if (project_id) {
           const project = await UpdateProject(token, project_id, formData);
-          props.setData(project);
+          props.updateData(project);
           props.onHide();
         }
         else

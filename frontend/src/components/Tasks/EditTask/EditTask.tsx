@@ -2,15 +2,15 @@ import { ChangeEvent, useEffect, useState, useContext } from "react";
 import { Alert, Button, Form, FormControl, Modal } from "react-bootstrap";
 import TokenContext from "../../../context/TokenContext";
 import { Priority } from "../../../interfaces/Priority";
-import { Task, TaskUpdate } from "../../../interfaces/Task";
+import { TaskUpdate } from "../../../interfaces/Task";
 import { GetPriorities } from "../../../apis/priority";
 import { GetTask, UpdateTask } from "../../../apis/task";
 import { validateTaskUpdateForm } from "../../../validation/Task";
 
 
 
-function EditTaskForm(props: IdModalProps) {
-  const task_id: number  = props.id;
+function EditTaskForm(props: ModalProps) {
+  const task_id = props.id;
   const { token, isTokenValid } = useContext(TokenContext);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -62,10 +62,7 @@ function EditTaskForm(props: IdModalProps) {
     try {
         if (task_id) {
             const result = await UpdateTask(token, task_id, formData);
-            props.setData({
-                ...props.data,
-                tasks: props.data.tasks.map((task: Task) => task.id === task_id ? result : task)
-              });
+            props.updateData(result);
             props.onHide();
         } else {
             throw new Error("Task ID not found");

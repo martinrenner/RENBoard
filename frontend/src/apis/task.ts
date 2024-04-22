@@ -1,7 +1,7 @@
 import { Task, TaskCreate, TaskUpdate } from "../interfaces/Task";
 
 
-export const CreateTask = async (token: string | null | undefined, project_id: number, formData: TaskCreate): Promise<Task> => {
+export const CreateTask = async (token: string | null | undefined, project_id: number | string, formData: TaskCreate): Promise<Task> => {
     const response = await fetch(`http://localhost:8000/task?project_id=${project_id}`, {
       method: "POST",
       headers: {
