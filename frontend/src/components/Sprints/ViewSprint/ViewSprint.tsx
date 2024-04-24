@@ -159,7 +159,7 @@ function ViewSprint() {
             </Button>
           </Col>
         </Row>
-        <Row className="mb-5" style={{minHeight: "50vh"}}>
+        <Row className="mb-5" style={{minHeight: "50vh", flexWrap: 'nowrap', overflowX: 'auto'}}>
         <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners} sensors={sensors}>
           {
             sprint.statuses.map((status) => (
