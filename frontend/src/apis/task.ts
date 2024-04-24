@@ -86,7 +86,7 @@ export const DeleteTask = async (token: string | null | undefined, task_id: stri
     }
 }
 
-export const AssingTask = async (token: string | null | undefined, task_id: string | number, status_id: string | number): Promise<void> => {
+export const AssingTask = async (token: string | null | undefined, task_id: string | number, status_id: string | number): Promise<Task> => {
     const response = await fetch(`http://localhost:8000/task/${task_id}/assign?status_id=${status_id}`, {
       method: "POST",
       headers: {
@@ -98,4 +98,6 @@ export const AssingTask = async (token: string | null | undefined, task_id: stri
     if (!response.ok) {
       throw new Error("Failed to assign task");
     }
+
+    return await response.json();
 }

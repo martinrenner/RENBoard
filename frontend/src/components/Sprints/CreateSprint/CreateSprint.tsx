@@ -56,7 +56,7 @@ function CreateSprintForm(props: ModalProps) {
           try {
             const result = await CreateSprint(token, project_id, formData);
             props.updateData(result);
-            // navigate(`/projects/${project_id}/sprint/${result.id}`);
+            navigate(`/projects/${project_id}/sprint/${result.id}`);
             props.onHide();
           } catch (error) {
             setErrorMessage("Create sprint failed");

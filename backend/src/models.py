@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel, BIGINT, VARCHAR, asc
 from sqlalchemy import TEXT, Column, Integer
-from datetime import date
+from datetime import date, datetime
 
 
 class Member(SQLModel, table=True):
@@ -26,6 +26,7 @@ class Task(SQLModel, table=True):
     description: str = Field(sa_column=Column(TEXT))
     date_created: date
     date_finished: Optional[date] = None
+    timestamp: Optional[datetime] = None
     
     sprint_id: int = Field(foreign_key="sprint.id", nullable=True)
     status_id: int = Field(foreign_key="status.id", nullable=True)

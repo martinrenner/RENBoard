@@ -6,6 +6,7 @@ export interface Task {
     description: string;
     date_created: string;
     date_finished: string | null;
+    timestamp: string;
     priority: Priority;
 }
 

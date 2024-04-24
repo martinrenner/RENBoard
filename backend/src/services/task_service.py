@@ -69,6 +69,7 @@ class TaskService:
 
         task.sprint_id = status.sprint_id
         task.status_id = status_id
+        task.timestamp = datetime.now()
 
         if task.status_id == status.sprint.statuses[-1].id:
             task.date_finished = datetime.today().date()
@@ -77,7 +78,7 @@ class TaskService:
 
         session.add(task)
         commit_and_handle_exception(session)
-
+        return task
 
     def assign_task_to_sprint(self, task_id: int, status_id: int, session: Session):
         task = self._select_task_by_id(task_id, session)
@@ -92,6 +93,7 @@ class TaskService:
 
         task.sprint_id = status.sprint_id
         task.status_id = status_id
+        task.timestamp = datetime.now()
         session.add(task)
         return task
 

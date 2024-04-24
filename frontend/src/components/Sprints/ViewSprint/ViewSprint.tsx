@@ -5,14 +5,14 @@ import { DeleteSprint, GetSprint } from "../../../apis/sprint";
 import { Sprint } from "../../../interfaces/Sprint";
 import { Project } from "../../../interfaces/Project";
 import { GetProject } from "../../../apis/project";
-import ViewTask from "../../Tasks/ViewTask/ViewTask";
-import { Badge, Breadcrumb, Button, Card, Col, Row } from "react-bootstrap";
-import { Calendar, PencilSquare, Trash } from "react-bootstrap-icons";
-import { DeleteTask } from "../../../apis/task";
-import EditTaskForm from "../../Tasks/EditTask/EditTask";
+import { Breadcrumb, Button, Col, Row } from "react-bootstrap";
+import { Calendar } from "react-bootstrap-icons";
 import EditSprintForm from "../EditSprint/EditSprint";
 import AddTaskSprint from "../AddTaskSprint/AddTaskSprint";
 import { Task } from "../../../interfaces/Task";
+import { DndContext, MouseSensor, closestCorners, useSensor, useSensors } from "@dnd-kit/core";
+import ViewStatus from "../../Statuses/ViewStatus/ViewStatus";
+import { AssingTask } from "../../../apis/task";
 
 function ViewSprint() {
   const navigate = useNavigate();
@@ -21,10 +21,7 @@ function ViewSprint() {
   const [ project, setProject ] = useState<Project>();
   const [ sprint, setSprint ] = useState<Sprint>({} as Sprint);
   const [showAddTaskForm, setShowAddTaskForm] = useState<boolean>(false);
-  const [showEditTaskForm, setShowEditTaskForm] = useState<boolean>(false);
   const [showEditSprintForm, setShowEditSprintForm] = useState<boolean>(false);
-  const [showViewTask, setShowViewTask] = useState<boolean>(false);
-  const [selectedTaskId, setSelectedTaskId] = useState<number>({} as number);
   
   useEffect(() => {
     if (isTokenValid()) {
@@ -64,27 +61,6 @@ function ViewSprint() {
     }
   };
 
-  const delete_task = async (task_id: number) => {
-    try {
-      await DeleteTask(token, task_id);
-      setSprint(
-        {
-          ...sprint,
-          statuses: sprint?.statuses.map((status) => 
-            {
-              return {
-                ...status,
-                task: status.task.filter((task) => task.id !== task_id)
-              }
-            }
-          )
-        }
-      )
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
-  }
-
   const updateShowSprint = (newInstance: any) => {
     setSprint(newInstance);
   }
@@ -94,29 +70,46 @@ function ViewSprint() {
       {
         ...sprint,
         statuses: sprint?.statuses.map((status, index) => 
-          index === 0 ? {...status, task: [...status.task, newInstance]} : status
+          index === 0 ? {...status, tasks: [...status.tasks, newInstance]} : status
         )
       }
     );
   }
 
-  const updateShownSprintTasks = (updatedInstance: Task) => {
-    setSprint(
-      {
-        ...sprint,
-        statuses: sprint?.statuses.map((status) => 
-          {
-            return {
-              ...status,
-              task: status.task.map((task) => 
-                task.id === updatedInstance.id ? updatedInstance : task
-              )
-            }
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      delay: 100,
+      tolerance: 5
+    }
+  });
+
+  const sensors = useSensors(mouseSensor);
+
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event;
+    
+    try {
+      setSprint(prevSprint => {
+        const task = active.data.current;
+
+        const newStatuses = prevSprint?.statuses.map(status => {
+          return {...status, tasks: status.tasks.filter(task => task.id !== active.id)};
+        });
+    
+        newStatuses.forEach(status => {
+          if (status.id === over.id) {
+            status.tasks.push(task);
           }
-        )
-      }
-    )
-  }
+        });
+      
+        return {...prevSprint, statuses: newStatuses};
+      });
+
+      await AssingTask(token, active.id, over.id);
+    } catch (error) {
+      console.error("Error assigning task:", error);
+    }
+  };
 
   return (
     <>
@@ -167,34 +160,13 @@ function ViewSprint() {
           </Col>
         </Row>
         <Row className="mb-5" style={{minHeight: "50vh"}}>
-        {
-          sprint.statuses.map((status) => (
-            <Col key={status.id} md={12/sprint.statuses.length}>
-              <Col className="p-2 bg-light rounded h-100">
-                <h3 className="text-center">{status.name}</h3>
-                {
-                  status.task.map((task) => (
-                    <Card key={task.id} className="flex-grow-1 d-flex flex-column">
-                      <Card.Body className="d-flex flex-column">
-                        <Card.Title>
-                          <h3>{task.name}</h3>
-                        </Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">
-                          <Badge pill bg={task.priority.color}>{task.priority.name}</Badge>
-                        </Card.Subtitle>
-                        <Card.Text>
-                          <Button variant="primary" onClick={() => {setShowViewTask(true); setSelectedTaskId(task.id);}}>Open</Button>{' '}
-                          <Button variant="primary" onClick={() => {setShowEditTaskForm(true); setSelectedTaskId(task.id);}}><PencilSquare/></Button>{' '}
-                          <Button variant="primary" onClick={() => delete_task(task.id)}><Trash/></Button>
-                        </Card.Text>
-                      </Card.Body>
-                    </Card>
-                  ))
-                }
-              </Col>
-            </Col>
-          ))
-        }
+        <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners} sensors={sensors}>
+          {
+            sprint.statuses.map((status) => (
+              <ViewStatus key={status.id} status={status} sprint={sprint} setSprint={setSprint}></ViewStatus>
+            ))
+          }
+        </DndContext>
         </Row>
         <Row className="mb-2">
           <h2>Chart</h2>
@@ -223,16 +195,6 @@ function ViewSprint() {
         {
           showEditSprintForm && (
             <EditSprintForm show={showEditSprintForm} onHide={() => {setShowEditSprintForm(false)}} id={sprint.id} updateData={updateShowSprint}/>
-          )
-        }
-        {
-          showEditTaskForm && (
-            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} updateData={updateShownSprintTasks}/>
-          )
-        }
-        {
-          showViewTask && (
-            <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} updateData={() => {}}/>
           )
         }
         </>

@@ -87,10 +87,17 @@ function ViewProject() {
   }
 
   const createShowProjectSprints = (newInstance: any) => {
-    setProject((prevProject) => ({
-      ...prevProject!,
-      sprints: [...prevProject!.sprints, newInstance]
-    }));
+    setProject((prevProject) => {
+      const newTasks = prevProject!.tasks.filter(
+        (task) => !newInstance.statuses[0].task.some((newTask: any) => newTask.id === task.id)
+      );
+
+      return {
+        ...prevProject!,
+        tasks: newTasks,
+        sprints: [...prevProject!.sprints, newInstance]
+      };
+    });
   }
 
   return (

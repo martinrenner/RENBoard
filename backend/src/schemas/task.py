@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from schemas.priority import PriorityRead
@@ -27,6 +27,7 @@ class TaskRead(TaskBase):
     description: str
     date_created: date
     date_finished: Optional[date] = None
+    timestamp: Optional[datetime] = None
     priority: PriorityRead
 
     @classmethod
@@ -37,5 +38,6 @@ class TaskRead(TaskBase):
             description=task.description,
             date_created=task.date_created,
             date_finished=task.date_finished if task.date_finished is not None else None,
+            timestamp=task.timestamp if task.timestamp is not None else None,
             priority=PriorityRead.from_priority(task.priority)
         )
