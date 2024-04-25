@@ -1,4 +1,4 @@
-import { Sprint, SprintCreate, SprintUpdate, TaskSprintCreate } from "../interfaces/Sprint";
+import { Sprint, SprintChart, SprintCreate, SprintUpdate, TaskSprintCreate } from "../interfaces/Sprint";
 import { Task } from "../interfaces/Task";
 
 export const CreateSprint = async (token: string | null | undefined, project_id: string | number, formData: SprintCreate): Promise<Sprint> => {
@@ -82,6 +82,22 @@ export const AddTaskToSprint = async (token: string | null | undefined, sprint_i
 
     if (!response.ok) {
       throw new Error("Failed to add task to sprint");
+    }
+
+    return await response.json();
+}
+
+export const GetSprintChart = async (token: string | null | undefined, sprint_id: string | number): Promise<SprintChart> => {
+    const response = await fetch(`http://localhost:8000/sprint/${sprint_id}/chart`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch sprint chart data");
     }
 
     return await response.json();

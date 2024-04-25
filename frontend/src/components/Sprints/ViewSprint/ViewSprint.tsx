@@ -13,6 +13,7 @@ import { Task } from "../../../interfaces/Task";
 import { DndContext, MouseSensor, closestCorners, useSensor, useSensors } from "@dnd-kit/core";
 import ViewStatus from "../../Statuses/ViewStatus/ViewStatus";
 import { AssingTask } from "../../../apis/task";
+import ChartSprintForm from "../ChartSprint/ChartSprint";
 
 function ViewSprint() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function ViewSprint() {
   const [ sprint, setSprint ] = useState<Sprint>({} as Sprint);
   const [showAddTaskForm, setShowAddTaskForm] = useState<boolean>(false);
   const [showEditSprintForm, setShowEditSprintForm] = useState<boolean>(false);
+  const [showChartSprintForm, setShowChartSprintForm] = useState<boolean>(false);
   
   useEffect(() => {
     if (isTokenValid()) {
@@ -132,6 +134,9 @@ function ViewSprint() {
             <h1>{project.name} - {sprint.name}</h1>
           </Col>
           <Col md={4} className="d-flex justify-content-end align-items-center">
+            <Button onClick={() => setShowChartSprintForm(true)} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+              Statistics
+            </Button>
             <Button onClick={() => setShowEditSprintForm(true)} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
               Edit
             </Button>
@@ -168,25 +173,6 @@ function ViewSprint() {
           }
         </DndContext>
         </Row>
-        <Row className="mb-2">
-          <h2>Chart</h2>
-        </Row>
-        <Row>
-          <Col md={10}>
-          
-          </Col>
-          <Col md={2}>
-            <Col>
-              <p>Speed:</p>
-            </Col>
-            <Col>
-              <p>Velocity:</p>
-            </Col>
-            <Col>
-              <p>Progress:</p>
-            </Col>
-          </Col>
-        </Row>
         {
           showAddTaskForm && (
             <AddTaskSprint show={showAddTaskForm} onHide={() => {setShowAddTaskForm(false)}} id={sprint.id} updateData={createShowSprintTasks}/>
@@ -195,6 +181,11 @@ function ViewSprint() {
         {
           showEditSprintForm && (
             <EditSprintForm show={showEditSprintForm} onHide={() => {setShowEditSprintForm(false)}} id={sprint.id} updateData={updateShowSprint}/>
+          )
+        }
+        {
+          showChartSprintForm && (
+            <ChartSprintForm show={showChartSprintForm} onHide={() => {setShowChartSprintForm(false)}} id={sprint.id} updateData={() => {}}/>
           )
         }
         </>
