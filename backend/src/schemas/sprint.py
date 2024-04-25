@@ -1,6 +1,7 @@
-from datetime import date
+from datetime import date, timedelta
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
+from schemas.progress import ProgressRead
 from schemas.status import StatusCreate, StatusRead
 from models import Sprint
 
@@ -34,7 +35,7 @@ class SprintRead(SprintBase):
     name: str
     description: str
     date_started: date
-    date_finished: Optional[date] = None
+    date_finished: date
     statuses: list[StatusRead]
 
     @classmethod
@@ -44,6 +45,40 @@ class SprintRead(SprintBase):
             name=sprint.name,
             description=sprint.description,
             date_started=sprint.date_started,
-            date_finished=sprint.date_finished if sprint.date_finished is not None else None,
+            date_finished=sprint.date_finished,
             statuses=[StatusRead.from_status(status) for status in sprint.statuses]
+        )
+    
+class SprintReadChart(SprintBase):
+    id: int
+    name: str
+    date_started: date
+    date_finished: date
+    velocity: float
+    on_time: bool
+    current_speed: float
+    total_tasks_count: int
+    total_tasks_finished_count: int
+    total_tasks_unfinished_count: int
+    daily_progress: list[ProgressRead]
+
+    @classmethod
+    def from_sprint(cls, sprint: Sprint):
+        total_tasks_count = len(sprint.tasks)
+        total_tasks_finished_count = len([task for task in sprint.tasks if task.date_finished])
+        total_tasks_unfinished_count = total_tasks_count - total_tasks_finished_count
+        date_range = [sprint.date_started + timedelta(days=i) for i in range((sprint.date_finished - sprint.date_started).days + 1)]
+
+        return cls(
+            id=sprint.id,
+            name=sprint.name,
+            date_started=sprint.date_started,
+            date_finished=sprint.date_finished,
+            velocity=0,
+            on_time=False,
+            current_speed=1.33,
+            total_tasks_count=total_tasks_count,
+            total_tasks_finished_count=total_tasks_finished_count,
+            total_tasks_unfinished_count=total_tasks_unfinished_count,
+            daily_progress = [ProgressRead.from_progress(date=date, tasks=sprint.tasks) for date in date_range]
         )

@@ -4,7 +4,7 @@ from sqlmodel import Session
 from schemas.task import TaskRead
 from services.sprint_service import SprintService
 from schemas.default import DefaultBase
-from schemas.sprint import SprintCreate, SprintRead, SprintUpdate
+from schemas.sprint import SprintCreate, SprintRead, SprintReadChart, SprintUpdate
 from tokens.access_token import AccessToken
 from database import get_session
 
@@ -84,3 +84,18 @@ def delete_sprint(sprint_id: int, user: user_dependency, session: db_dependency)
     """
     sprint_service.delete_sprint_db(sprint_id, user.id, session)
     return DefaultBase.from_default(message="Sprint deleted successfully.")
+
+@sprint_router.get("/{sprint_id}/chart/", response_model=SprintReadChart)
+def read_sprint_chart(sprint_id: int, user: user_dependency, session: db_dependency):
+    """
+    ## Read data for a sprint chart
+
+    Retrieve a data for chart for a specific sprint.
+
+    - **sprint_id (int)**: The ID of the sprint.
+
+    Returns:
+    - `SprintReadChart`: The chart data for the sprint.
+    """
+    sprint = sprint_service.select_sprint_by_id_db(sprint_id, user.id, session)
+    return SprintReadChart.from_sprint(sprint)
