@@ -12,6 +12,7 @@ import ViewTask from "../../Tasks/ViewTask/ViewTask";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { DeleteTask } from "../../../apis/task";
 import CreateSprintForm from "../../Sprints/CreateSprint/CreateSprint";
+import ChartProjectForm from "../ChartProject/ChartProject";
 
 function ViewProject() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function ViewProject() {
   const [showCreateTaskForm, setShowCreateTaskForm] = useState<boolean>(false);
   const [showEditTaskForm, setShowEditTaskForm] = useState<boolean>(false);
   const [showViewTask, setShowViewTask] = useState<boolean>(false);
+  const [showChartProjectForm, setShowChartProjectForm] = useState<boolean>(false);
   const [showCreateSprintForm, setShowCreateSprintForm] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number>({} as number);
   const { id, token, isTokenValid } = useContext(TokenContext);
@@ -119,6 +121,9 @@ function ViewProject() {
           {
             id === project.owner_id && (
               <Col md={4} className="d-flex justify-content-end align-items-center">
+                <Button onClick={() => setShowChartProjectForm(true)} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
+                  Statistics  
+                </Button>
                 <Button onClick={() => setShowManageMembers(true)} variant="primary" size="sm" className="rounded-pill me-2" style={{height: '40px', width: '80px'}}>
                   Members  
                 </Button>
@@ -222,34 +227,25 @@ function ViewProject() {
             }
         </Row>
         {
-          showEditProjectForm && (
-            <EditProjectForm show={showEditProjectForm} onHide={() => {setShowEditProjectForm(false)}} id={project.id} updateData={updateShowProject}/>
-          )
+          showEditProjectForm && <EditProjectForm show={showEditProjectForm} onHide={() => {setShowEditProjectForm(false)}} id={project.id} updateData={updateShowProject}/>
         }        
         {
-          project.owner_id === id && (
-            <ManageMember show={showManageMembers} onHide={() => {setShowManageMembers(false)}} id={project.id} updateData={() => {}}/>
-          )
+          project.owner_id === id && <ManageMember show={showManageMembers} onHide={() => {setShowManageMembers(false)}} id={project.id} updateData={() => {}}/>
         }
         {
-          showCreateTaskForm && (
-            <CreateTaskForm show={showCreateTaskForm} onHide={() => {setShowCreateTaskForm(false)}} id={project.id} updateData={createShowProjectTasks}/>
-          )
+          showCreateTaskForm && <CreateTaskForm show={showCreateTaskForm} onHide={() => {setShowCreateTaskForm(false)}} id={project.id} updateData={createShowProjectTasks}/>
         }
         {
-          showEditTaskForm && (
-            <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} updateData={updateShowProjectTasks}/>
-          )
+          showEditTaskForm && <EditTaskForm show={showEditTaskForm} onHide={() => {setShowEditTaskForm(false)}} id={selectedTaskId} updateData={updateShowProjectTasks}/>
         }
         {
-          showViewTask && (
-            <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} updateData={() => {}}/>
-          )
+          showViewTask && <ViewTask show={showViewTask} onHide={() => setShowViewTask(false)} id={selectedTaskId} updateData={() => {}}/>
         }
         {
-          showCreateSprintForm && (
-            <CreateSprintForm show={showCreateSprintForm} onHide={() => setShowCreateSprintForm(false)} id={project.id} updateData={createShowProjectSprints}/>
-          )
+          showCreateSprintForm && <CreateSprintForm show={showCreateSprintForm} onHide={() => setShowCreateSprintForm(false)} id={project.id} updateData={createShowProjectSprints}/>
+        }
+        {
+          showChartProjectForm && <ChartProjectForm show={showChartProjectForm} onHide={() => setShowChartProjectForm(false)} id={project.id} updateData={() => {}}/>
         }
       </>
     )}

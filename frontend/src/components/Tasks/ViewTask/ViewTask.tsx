@@ -38,7 +38,7 @@ function ViewTask(props: ModalProps) {
             <Badge pill bg={task.priority?.color}>{task.priority?.name}</Badge>
             <Col className="mt-3">
                 <p><strong>Name:</strong> {task?.name}</p>
-                <p><strong>Description:</strong> {task?.description}</p>
+                <p><strong>User Story:</strong> {task?.description}</p>
             </Col>
         </Modal.Body>
       </Modal>

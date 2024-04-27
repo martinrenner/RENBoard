@@ -1,10 +1,10 @@
 import { Badge, Button, Card } from "react-bootstrap";
 import { Task } from "../../../interfaces/Task";
-import { PencilSquare, Trash } from "react-bootstrap-icons";
+import { PencilSquare, Trash, XLg } from "react-bootstrap-icons";
 import { Sprint } from "../../../interfaces/Sprint";
 import { useContext, useState } from "react";
 import TokenContext from "../../../context/TokenContext";
-import { DeleteTask } from "../../../apis/task";
+import { DeassignTask, DeleteTask } from "../../../apis/task";
 import EditTaskForm from "../EditTask/EditTask";
 import ViewTask from "../ViewTask/ViewTask";
 import { useDraggable } from "@dnd-kit/core";
@@ -67,6 +67,27 @@ function CardTask(props: CardTaskProps) {
         }
     }
 
+    const deassign_task = async (task_id: number) => {
+      try {
+        await DeassignTask(token, task_id);
+        setSprint(
+          {
+            ...sprint,
+            statuses: sprint?.statuses.map((status) => 
+              {
+                return {
+                  ...status,
+                  tasks: status.tasks.filter((task) => task.id !== task_id)
+                }
+              }
+            )
+          }
+        )
+      } catch (error) {
+        console.error("Error deassigning task:", error);
+      }
+  }
+
     const customTransform = (transform: Transform | null) => {
         const {x, y} = transform ?? {x: 0, y: 0};
         return `translateX(${x}px) translateY(${y}px)`
@@ -85,7 +106,8 @@ function CardTask(props: CardTaskProps) {
                     <Card.Text>
                         <Button data-no-dnd="true" variant="primary" onClick={() => {setShowViewTask(true); setSelectedTaskId(task.id);}}>Open</Button>{' '}
                         <Button variant="primary" onClick={() => {setShowEditTaskForm(true); setSelectedTaskId(task.id);}}><PencilSquare/></Button>{' '}
-                        <Button variant="primary" onClick={() => delete_task(task.id)}><Trash/></Button>
+                        <Button variant="primary" onClick={() => delete_task(task.id)}><Trash/></Button>{' '}
+                        <Button variant="primary" onClick={() => {deassign_task(task.id)}}><XLg/></Button>
                     </Card.Text>
                 </Card.Body>
             </Card>

@@ -62,8 +62,8 @@ def read_all_task(project_id: int, user: user_dependency, session: db_dependency
     tasks = task_service.select_all_tasks_db(project_id, user.id, session)
     return [TaskRead.from_task(task) for task in tasks]
 
-@task_router.post("/{task_id}/assign")
-def assign_task_to_status(task_id: int, status_id: int, user: user_dependency, session: db_dependency):
+@task_router.post("/{task_id}/assign", response_model=TaskRead)
+def assign_task_to_sprint(task_id: int, status_id: int, user: user_dependency, session: db_dependency):
     """
     ## Assign a task to a sprint
 
@@ -71,10 +71,27 @@ def assign_task_to_status(task_id: int, status_id: int, user: user_dependency, s
 
     - **task_id (int)**: The ID of the task.
     - **sprint_id (int)**: The ID of the sprint to assign the task to.
+
+    Returns:
+    - `TaskRead`: The updated task.
     """
     task = task_service.assign_task_to_sprint_db(task_id, status_id, user.id, session)
     return TaskRead.from_task(task)
     
+@task_router.post("/{task_id}/deassign", response_model=TaskRead)
+def deassign_task_from_sprint(task_id: int, user: user_dependency, session: db_dependency):
+    """
+    ## Deassign a task from a sprint
+
+    Deassign a task from a sprint by setting the task's sprint ID to None.
+
+    - **task_id (int)**: The ID of the task.
+
+    Returns:
+    - `TaskRead`: The updated task.
+    """
+    task = task_service.deassign_task_from_sprint_db(task_id, user.id, session)
+    return TaskRead.from_task(task)
 
 @task_router.patch("/{task_id}/update", response_model=TaskRead)
 def update_task(task_id: int, task_update: TaskUpdate, user: user_dependency, session: db_dependency):

@@ -13,7 +13,7 @@ function CreateTaskForm(props: ModalProps) {
   const [formData, setFormData] = useState<TaskCreate>(
     {
       name: "",
-      description: "",
+      description: "As a [role],\nI want [feature]\nso that [reason].",
       priority_id: 1,
     }
   );
@@ -82,12 +82,13 @@ function CreateTaskForm(props: ModalProps) {
               {errors.name && <div className="text-danger">{errors.name}</div>}
             </Form.Group>
             <Form.Group>
-              <Form.Label>Description</Form.Label>
+              <Form.Label>User Story</Form.Label>
               <FormControl
                 as="textarea"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
+                rows={4}
               />
               {errors.description && <div className="text-danger">{errors.description}</div>}
             </Form.Group>

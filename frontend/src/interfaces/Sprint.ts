@@ -1,4 +1,4 @@
-import { Progress } from "./Progress";
+import { ProgressTask } from "./Progress";
 import { Status, StatusCreate } from "./Status";
 
 export interface Sprint {
@@ -35,11 +35,8 @@ export interface SprintChart {
     name: string;
     date_started: string;
     date_finished: string;
-    velocity: number;
-    on_time: boolean;
-    current_speed: number;
     total_tasks_count: number;
     total_tasks_finished_count: number;
     total_tasks_unfinished_count: number;
-    daily_progress: Progress[];
+    daily_progress: ProgressTask[];
 }

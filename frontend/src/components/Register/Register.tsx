@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Alert, Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { validateRegisterForm } from "../../validation/User";
 import { RegisterUser } from "./../../interfaces/User";
@@ -49,7 +49,7 @@ function RegisterForm() {
             <Card>
               <Card.Body className="p-5">
               <h1>Register</h1>
-                {errorMessage && <div className="text-danger">{errorMessage}</div>}
+                {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
                 <Form onSubmit={handleSubmit}>
                   <Form.Group>
                     <Form.Label>Name</Form.Label>

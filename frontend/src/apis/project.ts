@@ -1,4 +1,4 @@
-import { Project, ProjectCreate, ProjectUpdate } from "../interfaces/Project";
+import { Project, ProjectChart, ProjectCreate, ProjectUpdate } from "../interfaces/Project";
 
 export const CreateProject = async (token: string | null | undefined, formData: ProjectCreate): Promise<Project> => {
     const response = await fetch(`http://localhost:8000/project`, {
@@ -84,4 +84,20 @@ export const DeleteProject = async (token: string | null | undefined, project_id
     if (!response.ok) {
       throw new Error("Failed to delete project");
     }
+}
+
+export const GetProjectChart = async (token: string | null | undefined, project_id: string | number): Promise<ProjectChart> => {
+    const response = await fetch(`http://localhost:8000/project/${project_id}/chart`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch project chart data");
+    }
+
+    return await response.json();
 }

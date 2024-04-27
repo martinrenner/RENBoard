@@ -3,13 +3,13 @@ import { Col, Modal, Row } from "react-bootstrap";
 import TokenContext from "../../../context/TokenContext";
 import { SprintChart } from "../../../interfaces/Sprint";
 import { GetSprintChart } from "../../../apis/sprint";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 
 function ChartSprintForm(props: ModalProps) {
     const { token, isTokenValid } = useContext(TokenContext);
     const [ sprint, setSprint ] = useState<SprintChart>();
-    const [chartData, setChartData] = useState<{ date: string; tasksRemaining: number | null; tasksIdeal: number; }[]>([]);
+    const [ chartData, setChartData ] = useState<{ date: string; tasksRemaining: number | null; tasksIdeal: number; }[]>([]);
 
     useEffect(() => {
         if (isTokenValid()) {
@@ -62,24 +62,6 @@ function ChartSprintForm(props: ModalProps) {
                 <Row className="mb-4">
                     <Col md={4} className="mb-3">
                         <Col className="bg-light rounded p-2">
-                            <p>On time:</p>
-                            <h3 className="text-center"><b>{sprint?.on_time ? 'Yes' : 'No'}</b></h3>
-                        </Col>
-                    </Col>
-                    <Col md={4} className="mb-3">
-                        <Col className="bg-light rounded p-2">
-                            <p>Current speed: <small>(days per task)</small></p>
-                            <h3 className="text-center"><b>{sprint?.current_speed}</b></h3>
-                        </Col>
-                    </Col>
-                    <Col md={4} className="mb-3">
-                        <Col className="bg-light rounded p-2">
-                            <p>Velocity:</p>
-                            <h3 className="text-center"><b>{sprint?.velocity}</b></h3>
-                        </Col>
-                    </Col>
-                    <Col md={4} className="mb-3">
-                        <Col className="bg-light rounded p-2">
                             <p>Total:</p>
                             <h3 className="text-center"><b>{sprint?.total_tasks_count}</b></h3>
                         </Col>
@@ -107,9 +89,10 @@ function ChartSprintForm(props: ModalProps) {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" name="Days" label={{ value: 'Days', position: 'insideBottomCenter', dy: 30 }}/>
                         <YAxis name="Task Count" label={{ value: 'Task Count', angle: -90, position: 'insideLeftCenter', dx: -10 }}/>
+                        <Tooltip contentStyle={{ fontSize: '14px' }}/>
                         <Legend verticalAlign="top"  wrapperStyle={{ paddingBottom: '30px' }}/>
-                        <Line type="monotone" name="Actual Tasks Remaining" isAnimationActive={false} dataKey="tasksRemaining" stroke="#8884d8" strokeWidth={2}/>
-                        <Line type="linear" name="Ideal Tasks Remaining" isAnimationActive={false} dataKey="tasksIdeal" stroke="#82ca9d" strokeWidth={2} dot={false}/>
+                        <Line type="monotone" name="Actual Tasks Remaining" isAnimationActive={false} dataKey="tasksRemaining" stroke="#0d6efd" strokeWidth={2}/>
+                        <Line type="linear" name="Ideal Tasks Remaining" isAnimationActive={false} dataKey="tasksIdeal" stroke="#28a745" strokeWidth={2} dot={false}/>
                     </LineChart>
                 </ResponsiveContainer>
             </Modal.Body>

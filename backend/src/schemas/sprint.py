@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
-from schemas.progress import ProgressRead
+from schemas.progress import ProgressTaskRead
 from schemas.status import StatusCreate, StatusRead
 from models import Sprint
 
@@ -54,13 +54,10 @@ class SprintReadChart(SprintBase):
     name: str
     date_started: date
     date_finished: date
-    velocity: float
-    on_time: bool
-    current_speed: float
     total_tasks_count: int
     total_tasks_finished_count: int
     total_tasks_unfinished_count: int
-    daily_progress: list[ProgressRead]
+    daily_progress: list[ProgressTaskRead]
 
     @classmethod
     def from_sprint(cls, sprint: Sprint):
@@ -80,5 +77,5 @@ class SprintReadChart(SprintBase):
             total_tasks_count=total_tasks_count,
             total_tasks_finished_count=total_tasks_finished_count,
             total_tasks_unfinished_count=total_tasks_unfinished_count,
-            daily_progress = [ProgressRead.from_progress(date=date, tasks=sprint.tasks) for date in date_range]
+            daily_progress = [ProgressTaskRead.from_progress(date=date, tasks=sprint.tasks) for date in date_range]
         )

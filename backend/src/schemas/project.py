@@ -1,6 +1,7 @@
 from datetime import date
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
+from schemas.progress import ProgressSprintRead
 from schemas.task import TaskRead
 from schemas.tag import TagRead
 from schemas.sprint import SprintRead
@@ -64,4 +65,27 @@ class ProjectMemberRead(ProjectBase):
             name=member.project.name,
             is_owner=member.project.user_id == member.user_id,
             is_accepted=member.accepted
+        )
+
+class ProjectReadChart(ProjectBase):
+    id: int
+    name: str
+    total_sprints_count: int
+    total_sprints_finished_count: int
+    total_sprints_unfinished_count: int 
+    sprints_progress: list[ProgressSprintRead]
+
+    @classmethod
+    def from_project(cls, project: Project):
+        total_sprints_count = len(project.sprints)
+        total_sprints_finished_count = len([sprint for sprint in project.sprints if sprint.date_finished < date.today()])
+        total_sprints_unfinished_count = total_sprints_count - total_sprints_finished_count
+
+        return cls(
+            id=project.id,
+            name=project.name,
+            total_sprints_count=total_sprints_count,
+            total_sprints_finished_count=total_sprints_finished_count,
+            total_sprints_unfinished_count=total_sprints_unfinished_count,
+            sprints_progress=[ProgressSprintRead.from_progress(sprint) for sprint in project.sprints]
         )

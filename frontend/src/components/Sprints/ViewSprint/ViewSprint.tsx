@@ -5,7 +5,7 @@ import { DeleteSprint, GetSprint } from "../../../apis/sprint";
 import { Sprint } from "../../../interfaces/Sprint";
 import { Project } from "../../../interfaces/Project";
 import { GetProject } from "../../../apis/project";
-import { Breadcrumb, Button, Col, Row } from "react-bootstrap";
+import { Alert, Breadcrumb, Button, Col, Row } from "react-bootstrap";
 import { Calendar } from "react-bootstrap-icons";
 import EditSprintForm from "../EditSprint/EditSprint";
 import AddTaskSprint from "../AddTaskSprint/AddTaskSprint";
@@ -24,6 +24,7 @@ function ViewSprint() {
   const [showAddTaskForm, setShowAddTaskForm] = useState<boolean>(false);
   const [showEditSprintForm, setShowEditSprintForm] = useState<boolean>(false);
   const [showChartSprintForm, setShowChartSprintForm] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   
   useEffect(() => {
     if (isTokenValid()) {
@@ -91,23 +92,38 @@ function ViewSprint() {
     const { active, over } = event;
     
     try {
-      setSprint(prevSprint => {
-        const task = active.data.current;
+      const current_task_status_id = sprint?.statuses.find(status => status.tasks.find(task => task.id === active.id))?.id;
 
-        const newStatuses = prevSprint?.statuses.map(status => {
-          return {...status, tasks: status.tasks.filter(task => task.id !== active.id)};
-        });
-    
-        newStatuses.forEach(status => {
-          if (status.id === over.id) {
-            status.tasks.push(task);
-          }
-        });
+      if (current_task_status_id) {
+        setErrorMessage("");
+        if (current_task_status_id === over.id) {
+          setErrorMessage("Cannot move task to the same status");
+          return;
+        }
+  
+        if (Math.abs(over.id - current_task_status_id) > 1) {
+          setErrorMessage("Cannot move task more than one status at a time");
+          return;
+        }
+
+        setSprint(prevSprint => {
+          const task = active.data.current;
+
+          const newStatuses = prevSprint?.statuses.map(status => {
+            return {...status, tasks: status.tasks.filter(task => task.id !== active.id)};
+          });
       
-        return {...prevSprint, statuses: newStatuses};
-      });
+          newStatuses.forEach(status => {
+            if (status.id === over.id) {
+              status.tasks.push(task);
+            }
+          });
+        
+          return {...prevSprint, statuses: newStatuses};
+        });
 
-      await AssingTask(token, active.id, over.id);
+        await AssingTask(token, active.id, over.id);
+      }
     } catch (error) {
       console.error("Error assigning task:", error);
     }
@@ -163,6 +179,9 @@ function ViewSprint() {
               +
             </Button>
           </Col>
+        </Row>
+        <Row>
+          {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
         </Row>
         <Row className="mb-5" style={{minHeight: "50vh", flexWrap: 'nowrap', overflowX: 'auto'}}>
         <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners} sensors={sensors}>

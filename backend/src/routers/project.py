@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from schemas.default import DefaultBase
 from tokens.access_token import AccessToken
 from services.project_service import ProjectService
-from schemas.project import ProjectRead, ProjectCreate, ProjectUpdate
+from schemas.project import ProjectRead, ProjectCreate, ProjectReadChart, ProjectUpdate
 from database import get_session
 from sqlmodel import Session
 
@@ -76,6 +76,22 @@ def update_project(project_id: int, project_update: ProjectUpdate, user: user_de
     """
     updated_project = project_service.update_project_by_id_db(project_id, project_update, user.id, session)
     return ProjectRead.from_project(updated_project)
+
+
+@project_router.get("/{project_id}/chart/", response_model=ProjectReadChart)
+def read_project_chart(project_id: int, user: user_dependency, session: db_dependency):
+    """
+    ## Retrieve a project chart
+
+    This endpoint will return a project sprints chart based on project_id.
+
+    - **project_id**: ID of the project to retrieve
+
+    Returns:
+    - `project`: Project chart object
+    """
+    project = project_service.select_project_by_id_db(project_id, user.id, session)
+    return ProjectReadChart.from_project(project)
 
 
 @project_router.delete("/{project_id}/delete", response_model=DefaultBase)

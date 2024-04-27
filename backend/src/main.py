@@ -19,15 +19,31 @@ MAX_AGE: int = int(os.getenv("CORS_MAX_AGE", 600))
 
 
 description = """
-## Usage and explanation
 
-1. Register user `[POST] /user`
 
-2. Login user `[POST] /auth/token` (create token) and `[POST] /auth/refresh` (refresh token)
+## RENBoard
 
-3. Create project `[POST] /project`
+**RENBoard** is a Kanban board (with Scrum features) for software development teams. It allows you to manage your projects, sprints, tasks, and more.
 
-4. Get projects `[GET] /project`
+### ⚙️ How to use
+
+1. Register new user `[POST] /user`.
+
+2. Login user `[POST] /auth/token` (create token) and `[POST] /auth/refresh` (refresh token).
+
+    - You can use **Authorize button** to login into swagger.  **Only fields username and password are required.** It will automatically store and add token to auth requests.
+
+3. Create a new project `[POST] /project`.
+
+4. Create a new task `[POST] /task` to the project.
+
+5. Create a new sprint `[POST] /sprint`, specify your columns and assing some tasks to it.
+
+6. Move your tasks between columns `[POST] /task/{task_id}/assign`.
+
+7. Manage your project collaborators `[POST] /project-management`.
+
+🎉 Enjoy using **RENBoard**! 🎉
 """
 
 tags_metadata = [
@@ -45,7 +61,7 @@ tags_metadata = [
     },
     {
         "name": "Project Management",
-        "description": "Operations with project collaborators. **Authorization required.**",
+        "description": "Managing project collaborators. **Authorization required.**",
     },
     {
         "name": "Sprint",
@@ -57,7 +73,7 @@ tags_metadata = [
     },
     {
         "name": "Priority",
-        "description": "Operations with project priorities. **Authorization required.**",
+        "description": "Operations with task priorities. **Authorization required.**",
     },
     {
         "name": "Tag",
@@ -67,9 +83,8 @@ tags_metadata = [
 
 app = FastAPI(
     title="SWI APP",
-    summary="SWI APP - Kanban board for software development teams.",
     description=description,
-    version="0.0.1",
+    version="1.0.0",
     openapi_tags=tags_metadata,
 )
 

@@ -67,6 +67,9 @@ class TaskService:
         if status_id not in [status.id for status in task.sprint.statuses]:
             raise HTTPException(status_code=404, detail="Status not found in the sprint of the task")
 
+        if abs(task.status_id - status_id) > 1:
+            raise HTTPException(status_code=404, detail="Cannot move task more than one status at a time")
+
         task.sprint_id = status.sprint_id
         task.status_id = status_id
         task.timestamp = datetime.now()
@@ -77,6 +80,20 @@ class TaskService:
             task.date_finished = None
 
         session.add(task)
+        commit_and_handle_exception(session)
+        return task
+    
+    def deassign_task_from_sprint_db(self, task_id: int, user_id: int, session: Session):
+        task = self._select_task_by_id(task_id, session)
+        self._check_task(task)
+        self._check_permission(task.project_id, user_id, session)
+        
+        task.sprint_id = None
+        task.status_id = None
+        task.timestamp = None
+        task.date_finished = None
+        session.add(task)
+        
         commit_and_handle_exception(session)
         return task
 

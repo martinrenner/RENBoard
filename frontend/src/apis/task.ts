@@ -101,3 +101,19 @@ export const AssingTask = async (token: string | null | undefined, task_id: stri
 
     return await response.json();
 }
+
+export const DeassignTask = async (token: string | null | undefined, task_id: string | number): Promise<Task> => {
+    const response = await fetch(`http://localhost:8000/task/${task_id}/deassign`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to deassign task");
+    }
+
+    return await response.json();
+}

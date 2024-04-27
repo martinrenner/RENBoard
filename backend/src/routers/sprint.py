@@ -50,6 +50,16 @@ def read_sprint(sprint_id: int, user: user_dependency, session: db_dependency):
 
 @sprint_router.post("/{sprint_id}/assign-task/", response_model=TaskRead)
 def assign_task_to_sprint(sprint_id: int, task_id: int, user: user_dependency, session: db_dependency):
+    """
+    Assigns a task to a sprint.
+
+    - **sprint_id (int)**: The ID of the sprint to assign the task to.
+    - **task_id (int)**: The ID of the task to be assigned.
+
+    Returns:
+    - `TaskRead`: The assigned task.
+
+    """
     task = sprint_service.assign_task_to_sprint_db(task_id, sprint_id, user.id, session)
     return TaskRead.from_task(task)
 
