@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import TokenContext from "../../../context/TokenContext";
 import { GetProjects } from "../../../apis/project";
 import CreateProjectForm from "../CreateProject/CreateProject";
+import NoProjectCreated from "../NoProjectCreated/NoProjectCreated";
 
 function ListProject() {
   const [showCreateProjectForm, setShowCreateProjectForm] = useState<boolean>(false);
@@ -49,7 +50,8 @@ function ListProject() {
         </Col>
       </Row>
       <Row>
-        {projects.map((project) => (
+        { projects.length === 0 ? <NoProjectCreated/> :
+        projects.map((project) => (
           <Col key={project.id} md={4} xl={3} className="mb-4 d-flex">
             <Card className="flex-grow-1 d-flex flex-column">
               <Card.Body className="d-flex flex-column">

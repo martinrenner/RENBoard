@@ -13,6 +13,8 @@ import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { DeleteTask } from "../../../apis/task";
 import CreateSprintForm from "../../Sprints/CreateSprint/CreateSprint";
 import ChartProjectForm from "../ChartProject/ChartProject";
+import NoSprintCreated from "../../Sprints/NoSprintCreated/NoSprintCreated";
+import NoTaskCreated from "../../Tasks/NoTaskCreated/NoTaskCreated";
 
 function ViewProject() {
   const navigate = useNavigate();
@@ -158,6 +160,9 @@ function ViewProject() {
       </Row>
       <Row className="mb-5">
             {
+              project.sprints.length === 0 ? 
+                <NoSprintCreated/>
+              : 
               project.sprints.map((sprint) => (
                 <Col key={sprint.id} md={4} xl={3} className="mb-1 d-flex">
                   <Card className="flex-grow-1 d-flex flex-column">
@@ -202,6 +207,9 @@ function ViewProject() {
       </Row>
         <Row className="mb-5">
             {
+              project.tasks.length === 0 ? 
+                <NoTaskCreated/>
+              :
               project.tasks.map((task) => (
                 <Col key={task.id} md={4} xl={3} className="mb-4 d-flex">
                   <Card className="flex-grow-1 d-flex flex-column">

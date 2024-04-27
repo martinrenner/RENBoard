@@ -11,9 +11,7 @@ function Home() {
         </Col>
         <Col md={12} className='mb-4'>
           <p className="lead">
-            Embrace the flexibility and efficiency of managing projects with our interactive Kanban board. 
-            Whether you are part of a small team or a large organization, our tool is designed to streamline 
-            task management, enhance collaboration, and boost productivity across your projects.
+            By using our interactive Kanban board, you can enhance collaboration, streamline task management, and significantly boost productivity across various projects. Our tool aims to simplify complex project tracking and increase transparency in team workflows. Explore the possibilities with RenBoard and revolutionize the way you handle project management.
           </p>
           <Col className='mt-4 mb-4'>
             <Link to="/projects">
@@ -33,56 +31,52 @@ function Home() {
           <h2>Key Features</h2>
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row className='h-50'>
-              <Col md={4} className="text-center">
+              <Col md={4} className="d-flex align-items-center justify-content-center">
                 <Kanban size='100'/>
               </Col>
-              <Col md={8}>
-                <h3>Interactive Board</h3>
+              <Col md={8} className='p-5'>
+                <h3 className='mb-4'>Interactive Board</h3>
                 <p>
-                  Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
-                  lists to track the progress of your tasks and projects.
+                  Discover the full potential of visual management with our interactive Kanban board. Drag and drop functionality allows you to seamlessly move tasks through various stages of completion, offering a visual progression of your projects at a glance. It's perfect for maintaining momentum and ensuring continuous improvement throughout the lifecycle of your projects.
                 </p>
               </Col>
             </Row>
           </Col>
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row>
-              <Col md={8}>
-                <h3>Easily manage your tasks</h3>
+              <Col md={8} className='p-5'>
+                <h3 className='mb-4'>Easily Manage Your Tasks</h3>
                 <p>
-                  Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
-                  lists to track the progress of your tasks and projects.
+                  Take control of your task management with unparalleled ease. Our platform allows you to organize, prioritize, and update tasks quickly. This feature facilitates a more structured approach to task management, empowering you to meet your project goals efficiently.
                 </p>
               </Col>
-              <Col md={4} className="text-center">
+              <Col md={4} className="d-flex align-items-center justify-content-center">
                 <ListTask size='100'/>
               </Col>
             </Row>
           </Col>
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row>
-              <Col md={4} className="text-center">
+              <Col md={4} className="d-flex align-items-center justify-content-center">
                 <LayoutThreeColumns size='100'/>
               </Col>
-              <Col md={8}>
-                <h3>Custumisible columns</h3>
+              <Col md={8} className='p-5'>
+                <h3 className='mb-4'>Customizable Columns</h3>
                 <p>
-                  Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
-                  lists to track the progress of your tasks and projects.
+                  Our Kanban board comes with fully customizable columns that you can use for different phases of development. This customization allows for greater flexibility and precision in tracking project progress and managing team workload.
                 </p>
               </Col>
             </Row>
           </Col>
           <Col className='bg-light mt-4 p-4 mb-4 rounded'>
             <Row>
-              <Col md={8}>
-                <h3>Burndown chart</h3>
+              <Col md={8} className='p-5'>
+                <h3 className='mb-4'>Burndown Chart</h3>
                 <p>
-                  Visualize your workflow with our interactive Kanban board. Drag and drop cards across 
-                  lists to track the progress of your tasks and projects.
+                  Leverage our powerful Burndown chart to get a clear visual of your project’s progress against the planned schedule. This tool is invaluable for managing time effectively and keeping your projects on track. The Burndown chart helps you identify potential delays early and make necessary adjustments to ensure timely project delivery.
                 </p>
               </Col>
-              <Col md={4} className="text-center">
+              <Col md={4} className="d-flex align-items-center justify-content-center">
                 <GraphDown size='100'/>
               </Col>
             </Row>
@@ -92,14 +86,13 @@ function Home() {
           <h2>Created by</h2>
           <Col className='bg-light.bg-gradient mt-4 p-4 mb-4 rounded'>
             <Row>
-              <Col md={4} className='text-center'>
-                <img src="https://via.placeholder.com/150" alt="Placeholder" className="img-fluid rounded-circle" />
+              <Col md={4} className='d-flex align-items-center justify-content-center'>
+                <span style={{fontSize: '150px'}}>👨🏿‍💻</span>
               </Col>
               <Col md={8} className="d-flex flex-column justify-content-center">
-                <h3>Martin Renner</h3>
+                <h3 className='mb-4'>Martin Renner</h3>
                 <p>
-                  Full Stack Developer with a passion for creating web applications. 
-                  I am always eager to learn new technologies and improve my skills.
+                I am currently a student at the University of Jan Evangelista Purkyně (UJEP) in Ústí nad Labem. My academic and professional pursuits are deeply rooted in my passion for creating web applications. This application was developed as part of the coursework for the Software Engineering (SWI) subject at UJEP, specifically designed to fulfill course credit requirements.
                 </p>
               </Col>
             </Row>
