@@ -11,6 +11,15 @@ RENBoard is a powerful Kanban board application enhanced with Scrum elements des
 - **Customizable Columns:** Adapt the board to fit the specific needs of your project by customizing column names and the number of columns.
 - **Visualization:** Track project performance and milestones with detailed statistics including a Burndown chart and measurements of Project Velocity/Throughput.
 
+## 🚀 Usage
+
+1. Register and log in to your account.
+3. Create a new project.
+4. Add tasks to your project.
+5. Initiate a new sprint and assign tasks. You can add more tasks later.
+6. Progress tasks across columns as you work on them.
+7. Visualize your task progress with the Burndown chart.
+
 ## ⚙️ Technical Stack
 
 - **Backend:** FastAPI - A modern, fast (high-performance) web framework for building APIs with Python.
@@ -45,24 +54,11 @@ docker compose up
 
 - The application should automatically initialize and become accessible after running `docker compose up`.
 
-## 🚀 Usage
-
-After installation, access the following services in your web browser:
+4. After installation, access the following services in your web browser:
 
 - React Frontend: `http://localhost:5173`
 - FastAPI Swagger Documentation: `http://localhost:8000/docs`
 - PgAdmin Dashboard: `http://localhost:5050` (**optional** - it requires more setup)
-
-
-### How to use
-
-1. Register and log in to your account.
-3. Create a new project.
-4. Add tasks to your project.
-5. Initiate a new sprint and assign tasks. You can add more tasks later.
-6. Progress tasks across columns as you work on them.
-7. Visualize your task progress with the Burndown chart.
-
 
 ## 👨🏿‍💻 Contributors
 - [Martin Renner](https://github.com/martinrenner) - Creator and Main Contributor
