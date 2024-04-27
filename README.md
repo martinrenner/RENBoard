@@ -8,7 +8,7 @@ RENBoard is a powerful Kanban board application enhanced with Scrum elements des
 
 - **Interactive Board:** Create and organize cards on a Kanban board with seamless interactions.
 - **Manage Your Project Tasks:** Utilize drag-and-drop capabilities to easily move tasks across different stages of your project.
-- **Customizable Columns:** Adapt the board to fit the specific needs of your project by customizing column/stages names and the number of columns/stages.
+- **Customizable Columns/Stages:** Adapt the board to fit the specific needs of your project by customizing column names and the number of columns.
 - **Visualization:** Track project performance and milestones with detailed statistics including a Burndown chart and measurements of Project Velocity/Throughput.
 
 ## ⚙️ Technical Stack
@@ -52,6 +52,13 @@ This detailed usage guide will help you get started with RENBoard and make the m
 - **Manage Task Progress:**
   - Drag and drop tasks across different columns (e.g., To Do, In Progress, Done) as you work on them.
   - View, update, deassign, and delete tasks by clicking on the button on task card.
+
+### Managing Project Collaborators
+
+- **Manage Project Collaborators:**
+  - As the owner of a project, you can invite new collaborators by sending them an invitation through the project's management tab.
+  - Collaborators must accept the invitation to join your team.
+  - Owners also have the ability to remove collaborators from the project at any time.
 
 ### Monitoring and Reporting
 
