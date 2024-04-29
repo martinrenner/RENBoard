@@ -70,7 +70,7 @@ This detailed usage guide will help you get started with RENBoard and make the m
 
 - **Regular Updates:** Regularly update task statuses and sprint progress to keep the team informed.
 
-## Installation guide
+## 🔨 Installation guide
 
 1. Clone the application repositary
 
