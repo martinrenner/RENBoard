@@ -106,6 +106,8 @@ function ViewSprint() {
           return;
         }
 
+        const oldSprint = sprint;
+
         setSprint(prevSprint => {
           const task = active.data.current;
 
@@ -122,7 +124,13 @@ function ViewSprint() {
           return {...prevSprint, statuses: newStatuses};
         });
 
-        await AssingTask(token, active.id, over.id);
+        try {
+          await AssingTask(token, active.id, over.id);
+        }
+        catch (error) {
+          setErrorMessage("Data is unsynchronized, please refresh the page.");
+          setSprint(oldSprint);
+        }
       }
     } catch (error) {
       console.error("Error assigning task:", error);
