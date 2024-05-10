@@ -73,7 +73,7 @@ function EditSprintForm(props: ModalProps) {
         <Modal show={props.show} onHide={props.onHide}>
             <Modal.Header closeButton></Modal.Header>
             <Modal.Body>
-            <h1>Create Sprint</h1>
+            <h1>Edit Sprint</h1>
             {errorMessage && <Alert key="danger" variant="danger">{errorMessage}</Alert>}
             <Form onSubmit={handleSubmit}>
                 <Form.Group>
@@ -117,7 +117,7 @@ function EditSprintForm(props: ModalProps) {
                     {errors.date_finished && <div className="text-danger">{errors.date_finished}</div>} 
                 </Form.Group>
                 <Button variant="primary" type="submit" className="mt-3">
-                    Create
+                    Update
                 </Button>
             </Form>
             </Modal.Body>

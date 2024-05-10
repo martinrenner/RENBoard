@@ -92,7 +92,7 @@ function Home() {
               <Col md={8} className="d-flex flex-column justify-content-center">
                 <h3 className='mb-4'>Martin Renner</h3>
                 <p>
-                I am currently a student at the University of Jan Evangelista Purkyně (UJEP) in Ústí nad Labem. My academic and professional pursuits are deeply rooted in my passion for creating web applications. This application was developed as part of the coursework for the Software Engineering (SWI) subject at UJEP, specifically designed to fulfill course credit requirements.
+                I am currently a student at the University of Jan Evangelista Purkyně (UJEP) in Ústí nad Labem. My academic and professional pursuits are deeply rooted in my passion for creating web applications. This application was developed as part of the coursework for the SWI and GUI subjects at UJEP, specifically designed to fulfill course credit requirements.
                 </p>
               </Col>
             </Row>

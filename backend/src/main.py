@@ -82,7 +82,7 @@ tags_metadata = [
 ]
 
 app = FastAPI(
-    title="SWI APP",
+    title="RENBoard API",
     description=description,
     version="1.0.0",
     openapi_tags=tags_metadata,

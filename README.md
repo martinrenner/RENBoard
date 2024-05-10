@@ -75,7 +75,7 @@ This detailed usage guide will help you get started with RENBoard and make the m
 1. Clone the application repositary
 
  ```bash
-   git clone https://github.com/martinrenner/SWI.git
+   git clone https://github.com/martinrenner/RENBoard.git
 ```
 
 2. Define environment variables
